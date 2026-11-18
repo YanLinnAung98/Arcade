@@ -3,220 +3,254 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#070b14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Myanmar Cyber Arena - Online Multiplayer</title>
+  <title>Vanguard Cyber Arena - Multiplayer & Tournaments</title>
   <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap');
     body {
       font-family: 'Padauk', sans-serif;
-      background-color: #0b0f19;
+      background: radial-gradient(circle at top, #111936 0%, #070b14 65%);
       color: #f8fafc;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
     .glass {
-      background: rgba(30, 41, 59, 0.78);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(17, 25, 48, 0.78);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(99, 102, 241, 0.18);
     }
+    .glass-card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+    .frame-bronze { box-shadow: 0 0 0 3px #b45309, 0 0 12px rgba(180, 83, 9, 0.5); }
+    .frame-silver { box-shadow: 0 0 0 3px #94a3b8, 0 0 14px rgba(148, 163, 184, 0.6); }
+    .frame-gold   { box-shadow: 0 0 0 3px #f59e0b, 0 0 16px rgba(245, 158, 11, 0.7); }
+    .frame-diamond{ box-shadow: 0 0 0 3px #38bdf8, 0 0 18px rgba(56, 189, 248, 0.8); }
+    .frame-legend { box-shadow: 0 0 0 3px #f43f5e, 0 0 22px rgba(244, 63, 94, 0.9); }
+
     .ttt-cell {
       aspect-ratio: 1 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: 700;
-      border-radius: 0.75rem;
-      background: rgba(15, 23, 42, 0.9);
-      border: 2px solid rgba(99, 102, 241, 0.3);
+      border-radius: 0.85rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2px solid rgba(99, 102, 241, 0.35);
+      cursor: pointer;
+    }
+    .ttt-cell:active { transform: scale(0.94); }
+    .c4-cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 9999px;
+      background: #090d16;
+      border: 2px solid rgba(71, 85, 105, 0.5);
       transition: all 0.15s ease;
     }
-    .ttt-cell:active { transform: scale(0.95); }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- LIVE ANNOUNCEMENT BANNER -->
-  <div id="announcementBar" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white text-xs md:text-sm py-1.5 px-4 text-center font-bold hidden">
-    📢 <span id="announcementText">မင်္ဂလာပါ! Myanmar Cyber Arena သို့ ကြိုဆိုပါတယ်။</span>
+  <!-- LIVE ANNOUNCEMENT BAR -->
+  <div id="announcementBar" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-rose-600 text-white text-xs md:text-sm py-1.5 px-4 text-center font-bold hidden">
+    📢 <span id="announcementText">Vanguard Cyber Arena မှ ကြိုဆိုပါတယ်။</span>
   </div>
 
-  <!-- TOP NAVIGATION BAR (Visible after login) -->
-  <header id="topNav" class="glass sticky top-0 z-40 px-4 py-3 flex items-center justify-between hidden">
+  <!-- TOP NAVIGATION BAR -->
+  <header id="topNav" class="glass sticky top-0 z-40 px-3 md:px-6 py-2.5 flex items-center justify-between hidden">
     <div class="flex items-center gap-3">
-      <div id="navAvatar" class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-xl shadow-md">🐉</div>
+      <div id="navAvatar" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xl frame-bronze">🐉</div>
       <div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5">
           <span id="navName" class="font-bold text-sm md:text-base">Player</span>
-          <span id="navRankBadge" class="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">🥉 Bronze</span>
+          <span id="navRankBadge" class="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">🥉 Bronze</span>
         </div>
-        <div class="text-xs text-slate-400">
-          ID: <span id="navGameId" class="text-indigo-400 font-mono">MM-000000</span> • <span id="navRp" class="text-emerald-400 font-bold">1000 RP</span>
+        <div class="text-[11px] text-slate-400 flex items-center gap-2">
+          <span>ID: <b id="navGameId" class="text-indigo-400 font-mono">MM-000000</b></span>
+          <span>•</span>
+          <span id="navRp" class="text-emerald-400 font-bold">1000 RP</span>
+          <span id="cloudStatusDot" class="inline-block w-2 h-2 rounded-full bg-amber-400" title="Sync Status"></span>
         </div>
       </div>
     </div>
 
-    <div class="flex items-center gap-2">
-      <!-- Admin Switch Button (Strictly hidden unless yanlinnaung logs in) -->
+    <div class="flex items-center gap-1.5 md:gap-2">
+      <button onclick="toggleSound()" id="soundBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-800/90 border border-slate-700 text-xs" title="အသံ အဖွင့်/အပိတ်">🔊</button>
+      <button onclick="openRankGuide()" class="px-2.5 py-1.5 rounded-lg bg-slate-800/90 border border-slate-700 text-xs text-amber-300 font-bold">🏅 Rank</button>
       <button id="adminSwitchBtn" onclick="switchMainView('admin')" class="hidden px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-xs font-bold shadow-lg">
-        ⚙️ Admin Panel
+        🛡️ Admin
       </button>
-      <button onclick="switchMainView('arena')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-700">
-        🎮 ဂိမ်းခန်းမ
+      <button onclick="switchMainView('arena')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold">
+        🎮 Arena
       </button>
-      <button onclick="logoutUser()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-red-900/60 text-xs text-red-400 border border-slate-700">
-        ထွက်မည်
+      <button onclick="logoutUser()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-red-900/70 text-xs text-rose-400 border border-slate-700">
+        ထွက်ရန်
       </button>
     </div>
   </header>
 
   <!-- =========================================================
-       1. UNIFIED LOGIN / REGISTER SCREEN (STEALTH ADMIN LOGIN)
+       1. UNIFIED LANDING & STEALTH LOGIN SCREEN
   ========================================================== -->
   <main id="authScreen" class="flex-1 flex items-center justify-center p-4">
-    <div class="glass w-full max-w-md rounded-2xl p-6 md:p-8 shadow-2xl">
+    <div class="glass w-full max-w-md rounded-3xl p-6 md:p-8 shadow-2xl border border-indigo-500/30">
       <div class="text-center mb-6">
-        <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl shadow-lg">
+        <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-rose-600 flex items-center justify-center text-3xl shadow-lg">
           ⚔️
         </div>
-        <h1 class="text-2xl font-bold tracking-wide">MYANMAR CYBER ARENA</h1>
-        <p class="text-xs text-slate-400 mt-1">Real-Time Online Multiplayer & Tournament Platform</p>
+        <div class="inline-block px-3 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px] font-bold mb-1">
+          MYANMAR MULTIPLAYER ESPORTS
+        </div>
+        <h1 class="text-2xl font-bold tracking-wide">VANGUARD CYBER ARENA</h1>
+        <p class="text-xs text-slate-400 mt-1">Real-Time 1v1 Battles • Knockout Cups • Global Ranking</p>
       </div>
 
       <div class="space-y-4">
         <div>
           <label class="block text-xs text-slate-300 mb-1">အကောင့်အမည် (Username)</label>
-          <input id="loginUsername" type="text" placeholder="သင့်အမည် ရိုက်ထည့်ပါ" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:outline-none text-sm" />
+          <input id="loginUsername" type="text" placeholder="သင့်အမည် ရိုက်ထည့်ပါ" class="w-full px-4 py-3 rounded-xl bg-slate-950/90 border border-slate-700 focus:border-indigo-500 focus:outline-none text-sm" />
         </div>
         <div>
           <label class="block text-xs text-slate-300 mb-1">စကားဝှက် (Password)</label>
-          <input id="loginPassword" type="password" placeholder="စကားဝှက် ရိုက်ထည့်ပါ" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:border-indigo-500 focus:outline-none text-sm" />
+          <input id="loginPassword" type="password" placeholder="စကားဝှက် ရိုက်ထည့်ပါ" class="w-full px-4 py-3 rounded-xl bg-slate-950/90 border border-slate-700 focus:border-indigo-500 focus:outline-none text-sm" />
         </div>
         <p id="loginError" class="text-xs text-rose-400 hidden"></p>
         <button onclick="handleUnifiedLogin()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 font-bold text-sm shadow-lg transition">
-          ဂိမ်းထဲသို့ ဝင်ရောက်မည် (Login / Register)
+          အာရီနာထဲသို့ ဝင်ရောက်မည် (Enter Arena)
         </button>
         <p class="text-[11px] text-center text-slate-400">
-          * အကောင့်မရှိသေးပါက အမည်နှင့် စကားဝှက်အသစ် ရိုက်ထည့်ပြီး တိုက်ရိုက်ဖွင့်နိုင်ပါသည်။
+          * အကောင့်သစ်ဖြစ်ပါက အမည်နှင့် စကားဝှက် ရိုက်ထည့်ရုံဖြင့် Game ID အလိုအလျောက် ရရှိပါမည်။
         </p>
       </div>
     </div>
   </main>
 
   <!-- =========================================================
-       2. PLAYER ARENA VIEW (GAMES, RANKING, TOURNAMENT, SOCIAL, PROFILE)
+       2. PLAYER ARENA VIEW
   ========================================================== -->
   <section id="arenaView" class="flex-1 container mx-auto max-w-5xl p-4 pb-24 hidden">
 
-    <!-- Sub-Navigation Tabs -->
-    <div class="grid grid-cols-5 gap-1.5 glass p-1.5 rounded-xl mb-5 text-xs font-bold">
-      <button onclick="openTab('tabGames')" id="btn-tabGames" class="tab-btn py-2.5 rounded-lg bg-indigo-600 text-white">🎮 ဂိမ်းများ</button>
-      <button onclick="openTab('tabTourney')" id="btn-tabTourney" class="tab-btn py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">🏆 ပြိုင်ပွဲ</button>
-      <button onclick="openTab('tabRank')" id="btn-tabRank" class="tab-btn py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">📊 Ranking</button>
-      <button onclick="openTab('tabSocial')" id="btn-tabSocial" class="tab-btn py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">💬 သူငယ်ချင်း</button>
-      <button onclick="openTab('tabProfile')" id="btn-tabProfile" class="tab-btn py-2.5 rounded-lg text-slate-300 hover:bg-slate-800">👤 Profile</button>
+    <!-- Navigation Tabs -->
+    <div class="grid grid-cols-5 gap-1.5 glass p-1.5 rounded-2xl mb-5 text-xs font-bold">
+      <button onclick="openTab('tabGames')" id="btn-tabGames" class="tab-btn py-2.5 rounded-xl bg-indigo-600 text-white">🎮 ဂိမ်းများ</button>
+      <button onclick="openTab('tabTourney')" id="btn-tabTourney" class="tab-btn py-2.5 rounded-xl text-slate-300 hover:bg-slate-800">🏆 ပြိုင်ပွဲ</button>
+      <button onclick="openTab('tabRank')" id="btn-tabRank" class="tab-btn py-2.5 rounded-xl text-slate-300 hover:bg-slate-800">📊 Ranking</button>
+      <button onclick="openTab('tabSocial')" id="btn-tabSocial" class="tab-btn py-2.5 rounded-xl text-slate-300 hover:bg-slate-800">💬 စာပို့/ရှာ</button>
+      <button onclick="openTab('tabProfile')" id="btn-tabProfile" class="tab-btn py-2.5 rounded-xl text-slate-300 hover:bg-slate-800">👤 Profile</button>
     </div>
 
-    <!-- TAB 1: GAMES LOBBY & ACTIVE GAME STAGE -->
+    <!-- TAB 1: GAMES LOBBY & STAGE -->
     <div id="tabGames" class="space-y-5">
-      <div id="maintenanceNotice" class="hidden glass border-rose-500/40 p-6 rounded-2xl text-center">
-        <div class="text-4xl mb-2">🛠️</div>
+      <div id="maintenanceNotice" class="hidden glass border-rose-500/40 p-8 rounded-2xl text-center">
+        <div class="text-5xl mb-3">🛠️</div>
         <h3 class="text-lg font-bold text-rose-400">Server ပြုပြင်ထိန်းသိမ်းနေပါသည်</h3>
         <p class="text-xs text-slate-300 mt-1">Admin ဘက်မှ ခေတ္တပိတ်ထားပါသည်။ ခဏအကြာတွင် ပြန်လည်ဝင်ရောက်ပါ။</p>
       </div>
 
-      <!-- Mode Selector (Solo vs Online Matchmaking) -->
       <div id="lobbyCards" class="space-y-4">
-        <div class="glass p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+        <!-- Hero Arena Banner -->
+        <div class="rounded-2xl p-5 bg-gradient-to-r from-indigo-900/90 via-purple-900/80 to-slate-900 border border-indigo-500/30 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 class="font-bold text-base">ကစားမည့် ပုံစံ ရွေးချယ်ပါ</h2>
-            <p class="text-xs text-slate-400">Solo (AI နှင့် လေ့ကျင့်ရန်) သို့မဟုတ် Online ပွဲရှာရန်</p>
+            <span class="text-[11px] uppercase tracking-wider text-indigo-300 font-bold">Vanguard Battle Stage</span>
+            <h2 class="text-lg md:text-xl font-bold mt-0.5">ကစားမည့် စနစ်ကို ရွေးချယ်ပါ</h2>
+            <p class="text-xs text-slate-300 mt-0.5">Solo AI ဖြင့် လေ့ကျင့်နိုင်သလို Online Room Code ဖြင့် သူငယ်ချင်းနှင့် တိုက်ရိုက်ပြိုင်နိုင်ပါသည်။</p>
           </div>
           <div class="flex gap-2">
-            <button id="modeSoloBtn" onclick="setPlayMode('solo')" class="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold">🤖 Solo (AI)</button>
-            <button id="modeOnlineBtn" onclick="setPlayMode('online')" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold">🌐 Online ပွဲရှာမည်</button>
+            <button id="modeSoloBtn" onclick="setPlayMode('solo')" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-xs font-bold shadow">🤖 Solo (AI)</button>
+            <button id="modeOnlineBtn" onclick="setPlayMode('online')" class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold">🌐 Online 1v1</button>
           </div>
         </div>
 
-        <!-- Room Code Bar for Online Mode -->
-        <div id="onlineRoomBar" class="glass p-4 rounded-2xl hidden flex-wrap items-center justify-between gap-3 border border-indigo-500/30">
+        <!-- Online Room Controls -->
+        <div id="onlineRoomBar" class="glass p-4 rounded-2xl hidden flex-wrap items-center justify-between gap-3 border border-emerald-500/30">
           <div class="text-xs">
-            <span class="text-indigo-400 font-bold">🌐 Online Matchmaking:</span>
-            တူညီသော Room Code ရိုက်ထည့်၍ သူငယ်ချင်းနှင့် တိုက်ရိုက်ချိတ်ဆက်ပါ (သို့) Quick Match နှိပ်ပါ။
+            <span class="text-emerald-400 font-bold">🌐 Real-Time Online Room:</span>
+            ပြိုင်ဘက်နှင့် တူညီသော Room Code ထည့်ပါ (သို့) <b>Random Room</b> နှိပ်ပါ။
           </div>
           <div class="flex items-center gap-2">
-            <input id="roomCodeInput" type="text" value="PUBLIC-1" class="w-28 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono uppercase" />
+            <input id="roomCodeInput" type="text" value="ARENA-1" class="w-28 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs font-mono uppercase text-center" />
+            <button onclick="generateRandomRoom()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold">🎲 Random</button>
           </div>
         </div>
 
-        <!-- 3 Games Cards -->
-        <div class="grid md:grid-cols-3 gap-4">
+        <!-- 4 Games Grid -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Game 1: RPS -->
-          <div class="glass p-5 rounded-2xl flex flex-col justify-between border border-slate-800 hover:border-indigo-500/40 transition">
+          <div id="card-rps" class="glass-card p-5 rounded-2xl flex flex-col justify-between">
             <div>
-              <div class="text-4xl mb-3">✌️🪨📄</div>
-              <h3 class="font-bold text-lg">ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး</h3>
-              <p class="text-xs text-slate-400 mt-1">၃ ပွဲကစား ၂ ပွဲနိုင် (Best of 3) အမြန်နှုန်းပြိုင် ကစားနည်း။ အနိုင်ရလျှင် +25 RP ရရှိမည်။</p>
+              <div class="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-2xl mb-3">✌️🪨📄</div>
+              <h3 class="font-bold text-base">ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး</h3>
+              <p class="text-xs text-slate-400 mt-1">၃ ပွဲကစား ၂ ပွဲနိုင် (Best of 3) စနစ်။ အနိုင်ရလျှင် +25 RP ရရှိမည်။</p>
             </div>
-            <button onclick="launchGame('rps')" class="mt-5 w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold">
-              ကစားမည်
-            </button>
+            <button onclick="launchGame('rps')" class="mt-5 w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold">ကစားမည်</button>
           </div>
 
           <!-- Game 2: Tic-Tac-Toe -->
-          <div class="glass p-5 rounded-2xl flex flex-col justify-between border border-slate-800 hover:border-emerald-500/40 transition">
+          <div id="card-ttt" class="glass-card p-5 rounded-2xl flex flex-col justify-between">
             <div>
-              <div class="text-4xl mb-3">⭕❌</div>
-              <h3 class="font-bold text-lg">Tic-Tac-Toe (အကွက်ချ)</h3>
-              <p class="text-xs text-slate-400 mt-1">ဉာဏ်ရည်သုံး ၃ ကွက်ဆက် ကစားနည်း။ Solo AI သို့မဟုတ် Online ပြိုင်ဘက်နှင့် ယှဉ်ပြိုင်ပါ။ (+30 RP)</p>
+              <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-2xl mb-3">⭕❌</div>
+              <h3 class="font-bold text-base">Tic-Tac-Toe</h3>
+              <p class="text-xs text-slate-400 mt-1">၃ ကွက်ဆက် ဗျူဟာကစားနည်း။ Solo AI သို့မဟုတ် Online 1v1 ယှဉ်ပြိုင်ပါ။ (+30 RP)</p>
             </div>
-            <button onclick="launchGame('ttt')" class="mt-5 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
-              ကစားမည်
-            </button>
+            <button onclick="launchGame('ttt')" class="mt-5 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">ကစားမည်</button>
           </div>
 
-          <!-- Game 3: Myanmar Riddles -->
-          <div class="glass p-5 rounded-2xl flex flex-col justify-between border border-slate-800 hover:border-amber-500/40 transition">
+          <!-- Game 3: Connect 4 -->
+          <div id="card-c4" class="glass-card p-5 rounded-2xl flex flex-col justify-between">
             <div>
-              <div class="text-4xl mb-3">🏮📜</div>
-              <h3 class="font-bold text-lg">မြန်မာရိုးရာ ပဟေဠိ ဉာဏ်စမ်း</h3>
-              <p class="text-xs text-slate-400 mt-1">မြန်မာ့စကားထာနှင့် ဗဟုသုတ မေးခွန်း ၅ ပုဒ်ကို အချိန်မီ ဖြေဆိုရမည့် ကစားနည်း။ (+35 RP)</p>
+              <div class="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center text-2xl mb-3">🔴🟡</div>
+              <h3 class="font-bold text-base">၄ ပွင့်ဆက် (Connect 4)</h3>
+              <p class="text-xs text-slate-400 mt-1">အလျားလိုက်၊ ဒေါင်လိုက်၊ ထောင့်ဖြတ် ၄ လုံးဆက်အောင် ချရမည့် ဂိမ်း။ (+35 RP)</p>
             </div>
-            <button onclick="launchGame('quiz')" class="mt-5 w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs font-bold">
-              ကစားမည်
-            </button>
+            <button onclick="launchGame('c4')" class="mt-5 w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold">ကစားမည်</button>
+          </div>
+
+          <!-- Game 4: Myanmar Sakar Htar / Riddles -->
+          <div id="card-quiz" class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-2xl mb-3">🏮📜</div>
+              <h3 class="font-bold text-base">မြန်မာ့စကားထာ ပဟေဠိ</h3>
+              <p class="text-xs text-slate-400 mt-1">မြန်မာရိုးရာ စကားထာနှင့် ဉာဏ်စမ်းမေးခွန်းများကို အမှတ်ပြိုင် ဖြေဆိုပါ။ (+35 RP)</p>
+            </div>
+            <button onclick="launchGame('quiz')" class="mt-5 w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs font-bold">ကစားမည်</button>
           </div>
         </div>
       </div>
 
       <!-- ACTIVE GAME STAGE -->
-      <div id="activeGameStage" class="glass p-5 rounded-2xl hidden">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-          <div>
-            <span id="stageTitle" class="font-bold text-base">Game Title</span>
-            <span id="stageModeBadge" class="ml-2 text-[11px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Solo</span>
+      <div id="activeGameStage" class="glass p-5 rounded-2xl hidden border border-indigo-500/40">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span id="stageTitle" class="font-bold text-base">Game</span>
+            <span id="stageModeBadge" class="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold">Solo</span>
           </div>
-          <button onclick="closeGameStage()" class="px-3 py-1 rounded-lg bg-slate-800 text-xs text-slate-300 hover:bg-rose-600">✕ ပွဲမှထွက်မည်</button>
+          <button onclick="closeGameStage()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-xs font-bold">✕ ပွဲမှထွက်မည်</button>
         </div>
         <div id="stageBody"></div>
       </div>
     </div>
 
-    <!-- TAB 2: KNOCKOUT TOURNAMENTS (ရှုံးထွက် ပွဲစဉ်များ) -->
+    <!-- TAB 2: KNOCKOUT TOURNAMENTS -->
     <div id="tabTourney" class="hidden space-y-4">
       <div class="glass p-5 rounded-2xl">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
-            <h2 class="text-lg font-bold">🏆 Admin ရှုံးထွက် ပြိုင်ပွဲစဉ် (Knockout Event)</h2>
-            <p class="text-xs text-slate-400">Admin သတ်မှတ်ထားသော ကစားနည်းဖြင့် ရှုံးထွက် ယှဉ်ပြိုင်ပြီး ဆုကြေး RP ရယူပါ။</p>
+            <h2 class="text-lg font-bold">🏆 ရှုံးထွက် ပြိုင်ပွဲစဉ် (Knockout Tournament)</h2>
+            <p class="text-xs text-slate-400">Admin သတ်မှတ်ထားသော ကစားနည်းဖြင့် ရှုံးထွက်ယှဉ်ပြိုင်ပြီး ချန်ပီယံဆုကြေး ရယူပါ။</p>
           </div>
-          <button onclick="joinActiveTournament()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs font-bold">
+          <button onclick="joinActiveTournament()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs font-bold shadow">
             + ပြိုင်ပွဲ စာရင်းသွင်းမည်
           </button>
         </div>
@@ -224,20 +258,25 @@
       </div>
     </div>
 
-    <!-- TAB 3: REAL-TIME LEADERBOARD (RANKING) -->
+    <!-- TAB 3: REAL-TIME LEADERBOARD -->
     <div id="tabRank" class="hidden space-y-4">
       <div class="glass p-5 rounded-2xl">
-        <h2 class="text-lg font-bold mb-1">📊 Real-Time ကစားသမား အဆင့်သတ်မှတ်ချက် (Ranking)</h2>
-        <p class="text-xs text-slate-400 mb-4">RP အမှတ်ပေါ် မူတည်၍ Bronze, Silver, Gold, Diamond, Legend အဆင့်များ အချိန်နှင့်တစ်ပြေးညီ ပြောင်းလဲပါသည်။</p>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold">📊 Real-Time အဆင့်သတ်မှတ်ချက် (Leaderboard)</h2>
+            <p class="text-xs text-slate-400">ကစားသမား အမည်ကို နှိပ်၍ Profile ကြည့်ခြင်း၊ Add / Block / စာပို့ခြင်း ပြုလုပ်နိုင်ပါသည်။</p>
+          </div>
+          <button onclick="openRankGuide()" class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-amber-300 font-bold">🏅 Rank လမ်းညွှန်</button>
+        </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead>
               <tr class="border-b border-slate-800 text-slate-400">
-                <th class="py-2.5 px-2">#</th>
+                <th class="py-2.5 px-2">အဆင့်</th>
                 <th class="py-2.5 px-2">ကစားသမား</th>
                 <th class="py-2.5 px-2">Game ID</th>
                 <th class="py-2.5 px-2">Rank</th>
-                <th class="py-2.5 px-2">နိုင်/ရှုံး</th>
+                <th class="py-2.5 px-2">နိုင် / ရှုံး</th>
                 <th class="py-2.5 px-2 text-right">RP အမှတ်</th>
               </tr>
             </thead>
@@ -247,15 +286,14 @@
       </div>
     </div>
 
-    <!-- TAB 4: SOCIAL (SEARCH BY GAME ID, ADD FRIEND, BLOCK, REALTIME CHAT) -->
+    <!-- TAB 4: SOCIAL HUB -->
     <div id="tabSocial" class="hidden space-y-4">
       <div class="grid md:grid-cols-2 gap-4">
-        <!-- Search & Friends List -->
         <div class="glass p-5 rounded-2xl space-y-4">
-          <h3 class="font-bold text-base">🔍 ကစားသမား ရှာဖွေရန် (Game ID / အမည်)</h3>
+          <h3 class="font-bold text-base">🔍 ကစားသမား ရှာဖွေရန် (Game ID သို့မဟုတ် အမည်)</h3>
           <div class="flex gap-2">
-            <input id="searchPlayerInput" type="text" placeholder="ဥပမာ - MM-123456 သို့မဟုတ် အမည်" class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs" />
-            <button onclick="searchPlayerById()" class="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold">ရှာမည်</button>
+            <input id="searchPlayerInput" type="text" placeholder="ဥပမာ - MM-123456 သို့မဟုတ် အမည်" class="flex-1 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs" />
+            <button onclick="searchPlayerById()" class="px-4 py-2.5 rounded-xl bg-indigo-600 text-xs font-bold">ရှာမည်</button>
           </div>
           <div id="searchResultBox" class="text-xs space-y-2"></div>
 
@@ -267,17 +305,17 @@
           <div id="blockedListBox" class="space-y-2 text-xs"></div>
         </div>
 
-        <!-- Direct Message Chat Box -->
-        <div class="glass p-5 rounded-2xl flex flex-col h-96">
-          <div class="border-b border-slate-800 pb-2 mb-3 flex items-center justify-between">
-            <span id="chatTargetTitle" class="font-bold text-xs text-indigo-300">💬 သူငယ်ချင်းတစ်ဦးကို ရွေးပြီး စာပို့ပါ</span>
+        <!-- Direct Message Chat -->
+        <div class="glass p-5 rounded-2xl flex flex-col h-[420px]">
+          <div class="border-b border-slate-800 pb-2.5 mb-3 flex items-center justify-between">
+            <span id="chatTargetTitle" class="font-bold text-xs text-indigo-300">💬 သူငယ်ချင်းတစ်ဦးကို ရွေးပြီး စာတိုပို့ပါ</span>
           </div>
           <div id="chatMessagesBox" class="flex-1 overflow-y-auto space-y-2 pr-1 text-xs">
-            <p class="text-slate-500 text-center mt-12">ဘယ်ဘက်ရှိ သူငယ်ချင်းစာရင်းမှ "💬 စာပို့မည်" ကို နှိပ်ပါ။</p>
+            <p class="text-slate-500 text-center mt-16">ဘယ်ဘက်စာရင်းမှ "💬 စာပို့" ခလုတ်ကို နှိပ်ပါ။</p>
           </div>
           <div class="mt-3 flex gap-2">
-            <input id="chatInput" type="text" placeholder="စာတို ရေးသားပါ..." class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs" />
-            <button onclick="sendDirectMessage()" class="px-4 py-2 rounded-xl bg-emerald-600 text-xs font-bold">ပို့မည်</button>
+            <input id="chatInput" onkeydown="if(event.key==='Enter') sendDirectMessage()" type="text" placeholder="စာတို ရေးသားပါ..." class="flex-1 px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs" />
+            <button onclick="sendDirectMessage()" class="px-4 py-2.5 rounded-xl bg-emerald-600 text-xs font-bold">ပို့မည်</button>
           </div>
         </div>
       </div>
@@ -287,39 +325,45 @@
     <div id="tabProfile" class="hidden">
       <div class="glass p-6 rounded-2xl max-w-xl mx-auto space-y-4">
         <div class="flex items-center gap-4">
-          <div id="profAvatarBig" class="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-4xl">🐉</div>
+          <div id="profAvatarBig" class="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-4xl frame-bronze">🐉</div>
           <div>
             <h2 id="profTitleName" class="text-xl font-bold">Player</h2>
-            <p class="text-xs text-slate-400">Game ID: <span id="profGameId" class="font-mono text-indigo-400 font-bold">MM-000000</span></p>
-            <p id="profRankText" class="text-xs text-amber-400 font-bold mt-0.5">🥉 Bronze • 1000 RP</p>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="text-xs text-slate-400">Game ID: <b id="profGameId" class="font-mono text-indigo-400">MM-000000</b></span>
+              <button onclick="copyMyGameId()" class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300">Copy ID</button>
+            </div>
+            <p id="profRankText" class="text-xs text-amber-400 font-bold mt-1">🥉 Bronze • 1000 RP</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 text-center bg-slate-900/80 p-3 rounded-xl text-xs">
+        <div class="grid grid-cols-4 gap-2 text-center bg-slate-950/80 p-3 rounded-xl text-xs">
           <div><div class="text-slate-400">ပွဲပေါင်း</div><div id="profTotal" class="font-bold text-base mt-0.5">0</div></div>
           <div><div class="text-slate-400">အနိုင်</div><div id="profWins" class="font-bold text-base text-emerald-400 mt-0.5">0</div></div>
           <div><div class="text-slate-400">အရှုံး</div><div id="profLosses" class="font-bold text-base text-rose-400 mt-0.5">0</div></div>
+          <div><div class="text-slate-400">Win Rate</div><div id="profWinRate" class="font-bold text-base text-indigo-400 mt-0.5">0%</div></div>
         </div>
 
-        <div class="space-y-3 pt-2">
+        <div class="space-y-3 pt-1">
           <div>
             <label class="block text-xs text-slate-400 mb-1">Display Name (ပြသမည့် အမည်)</label>
-            <input id="editDisplayName" type="text" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs" />
+            <input id="editDisplayName" type="text" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs" />
           </div>
           <div>
             <label class="block text-xs text-slate-400 mb-1">Avatar ရွေးချယ်ရန်</label>
-            <div class="flex gap-2 flex-wrap" id="avatarPicker">
+            <div class="flex gap-2 flex-wrap">
               <button onclick="selectProfileAvatar('🐉')" class="p-2 rounded-lg bg-slate-800 text-xl">🐉</button>
               <button onclick="selectProfileAvatar('🐯')" class="p-2 rounded-lg bg-slate-800 text-xl">🐯</button>
               <button onclick="selectProfileAvatar('🦅')" class="p-2 rounded-lg bg-slate-800 text-xl">🦅</button>
               <button onclick="selectProfileAvatar('⚔️')" class="p-2 rounded-lg bg-slate-800 text-xl">⚔️</button>
               <button onclick="selectProfileAvatar('👑')" class="p-2 rounded-lg bg-slate-800 text-xl">👑</button>
               <button onclick="selectProfileAvatar('🏮')" class="p-2 rounded-lg bg-slate-800 text-xl">🏮</button>
+              <button onclick="selectProfileAvatar('🦊')" class="p-2 rounded-lg bg-slate-800 text-xl">🦊</button>
+              <button onclick="selectProfileAvatar('🛡️')" class="p-2 rounded-lg bg-slate-800 text-xl">🛡️</button>
             </div>
           </div>
           <div>
-            <label class="block text-xs text-slate-400 mb-1">ကိုယ်ရေးအကျဉ်း (Bio / Status)</label>
-            <textarea id="editBio" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs"></textarea>
+            <label class="block text-xs text-slate-400 mb-1">ကိုယ်ရေးအကျဉ်း (Bio)</label>
+            <textarea id="editBio" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs"></textarea>
           </div>
           <button onclick="saveProfileChanges()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold">
             💾 Profile အချက်အလက် သိမ်းဆည်းမည်
@@ -330,140 +374,186 @@
   </section>
 
   <!-- =========================================================
-       3. MASTER ADMIN CONTROL PANEL (ONLY FOR yanlinnaung)
+       3. MASTER ADMIN CONTROL PANEL (STEALTH: yanlinnaung / 163104)
   ========================================================== -->
-  <section id="adminView" class="flex-1 container mx-auto max-w-5xl p-4 pb-24 hidden space-y-6">
+  <section id="adminView" class="flex-1 container mx-auto max-w-5xl p-4 pb-24 hidden space-y-5">
     <div class="glass p-5 rounded-2xl border border-rose-500/40 flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2 class="text-lg font-bold text-rose-400">🛡️ Master Admin Control Panel (yanlinnaung)</h2>
-        <p class="text-xs text-slate-400">Server ထိန်းချုပ်မှု၊ ရှုံးထွက် Event ပွဲစဉ်များ၊ ပဟေဠိ မေးခွန်းများနှင့် ကစားသမား Rank များကို စီမံပါ။</p>
+        <h2 class="text-lg font-bold text-rose-400">🛡️ Master Admin Control Center (yanlinnaung)</h2>
+        <p class="text-xs text-slate-400">Server ထိန်းချုပ်မှု၊ ရှုံးထွက် Event ပွဲစဉ်များ၊ စကားထာ မေးခွန်းများနှင့် ကစားသမား Rank များကို စီမံပါ။</p>
       </div>
-      <button onclick="switchMainView('arena')" class="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold">
+      <button onclick="switchMainView('arena')" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold shadow">
         🎮 ဂိမ်းကစားသည့်နေရာသို့ သွားမည်
       </button>
     </div>
 
-    <!-- Cloud Sync Config + Server Controls -->
     <div class="grid md:grid-cols-2 gap-4">
+      <!-- Server & Firebase Config -->
       <div class="glass p-5 rounded-2xl space-y-3">
-        <h3 class="font-bold text-sm text-indigo-300">⚙️ ၁။ Server & Cloud Realtime Database ချိတ်ဆက်မှု</h3>
+        <h3 class="font-bold text-sm text-indigo-300">⚙️ ၁။ Server & Firebase Realtime Database ထိန်းချုပ်မှု</h3>
         <div>
-          <label class="block text-[11px] text-slate-400 mb-1">Firebase Realtime Database URL (Free Spark Plan)</label>
-          <input id="adminFirebaseUrl" type="text" placeholder="https://your-game-default-rtdb.firebaseio.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono" />
+          <label class="block text-[11px] text-slate-400 mb-1">Firebase Realtime Database URL</label>
+          <input id="adminFirebaseUrl" type="text" placeholder="https://your-project-default-rtdb.firebasedatabase.app" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono" />
         </div>
         <div>
-          <label class="block text-[11px] text-slate-400 mb-1">ကြေညာချက် စာတန်း (Live Announcement)</label>
-          <input id="adminAnnouncement" type="text" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs" />
+          <label class="block text-[11px] text-slate-400 mb-1">Live ကြေညာချက် စာတန်း (Announcement)</label>
+          <input id="adminAnnouncement" type="text" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs" />
         </div>
-        <div class="flex items-center justify-between text-xs pt-1">
-          <span>Maintenance Mode (ဆာဗာ ခေတ္တပိတ်ရန်)</span>
-          <input id="adminMaintenance" type="checkbox" class="w-4 h-4" />
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+          <label class="flex items-center gap-2 bg-slate-950 p-2 rounded-lg"><input id="adminMaintenance" type="checkbox" /> Maintenance Mode</label>
+          <label class="flex items-center gap-2 bg-slate-950 p-2 rounded-lg"><input id="chk-rps" type="checkbox" checked /> RPS ဖွင့်ထားမည်</label>
+          <label class="flex items-center gap-2 bg-slate-950 p-2 rounded-lg"><input id="chk-ttt" type="checkbox" checked /> Tic-Tac-Toe ဖွင့်ထားမည်</label>
+          <label class="flex items-center gap-2 bg-slate-950 p-2 rounded-lg"><input id="chk-c4" type="checkbox" checked /> Connect 4 ဖွင့်ထားမည်</label>
+          <label class="flex items-center gap-2 bg-slate-950 p-2 rounded-lg"><input id="chk-quiz" type="checkbox" checked /> စကားထာ ဖွင့်ထားမည်</label>
         </div>
-        <button onclick="saveAdminServerConfig()" class="w-full py-2 rounded-xl bg-indigo-600 text-xs font-bold">
+        <button onclick="saveAdminServerConfig()" class="w-full py-2.5 rounded-xl bg-indigo-600 text-xs font-bold">
           💾 Server Settings သိမ်းဆည်းမည်
         </button>
       </div>
 
-      <!-- Knockout Tournament Creator -->
+      <!-- Knockout Event Manager -->
       <div class="glass p-5 rounded-2xl space-y-3">
-        <h3 class="font-bold text-sm text-amber-300">🏆 ၂။ ရှုံးထွက် Event (Knockout Tournament) ဖန်တီးရန်</h3>
+        <h3 class="font-bold text-sm text-amber-300">🏆 ၂။ ရှုံးထွက် Event (Knockout Tournament) စီမံရန်</h3>
         <div>
-          <label class="block text-[11px] text-slate-400 mb-1">ပြိုင်ပွဲ အမည်</label>
-          <input id="adminTourneyName" type="text" value="Myanmar Grand Cup" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs" />
+          <label class="block text-[11px] text-slate-400 mb-1">Event ပွဲစဉ် အမည်</label>
+          <input id="adminTourneyName" type="text" value="Vanguard Grand Cup" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs" />
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ကစားနည်း သတ်မှတ်ရန်</label>
-            <select id="adminTourneyGame" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs">
+            <label class="block text-[11px] text-slate-400 mb-1">ကစားနည်း ရွေးချယ်ရန်</label>
+            <select id="adminTourneyGame" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs">
               <option value="rps">ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး</option>
               <option value="ttt">Tic-Tac-Toe</option>
-              <option value="quiz">မြန်မာရိုးရာ ပဟေဠိ</option>
+              <option value="c4">၄ ပွင့်ဆက် (Connect 4)</option>
+              <option value="quiz">မြန်မာ့စကားထာ ပဟေဠိ</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ဆုကြေး (RP)</label>
-            <input id="adminTourneyPrize" type="number" value="200" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs" />
+            <label class="block text-[11px] text-slate-400 mb-1">ချန်ပီယံ ဆုကြေး (RP)</label>
+            <input id="adminTourneyPrize" type="number" value="250" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs" />
           </div>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2 pt-1">
           <button onclick="adminCreateTournament()" class="flex-1 py-2 rounded-xl bg-amber-600 text-xs font-bold">ပြိုင်ပွဲအသစ် ဖွင့်မည်</button>
-          <button onclick="adminFillTournamentBots()" class="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs">🤖 လူဖြည့်ပြီး စတင်မည်</button>
+          <button onclick="adminStartKnockoutBracket()" class="flex-1 py-2 rounded-xl bg-emerald-600 text-xs font-bold">ရှုံးထွက်ဇယား စတင်မည်</button>
         </div>
       </div>
     </div>
 
-    <!-- Myanmar Riddle Manager -->
+    <!-- Player Rank & Ban Control -->
     <div class="glass p-5 rounded-2xl space-y-3">
-      <h3 class="font-bold text-sm text-emerald-300">🏮 ၃။ မြန်မာရိုးရာ ပဟေဠိ မေးခွန်းအသစ် ထည့်သွင်းရန်</h3>
+      <h3 class="font-bold text-sm text-sky-300">👥 ၃။ ကစားသမားများ စီမံခန့်ခွဲမှု (RP ပြင်ဆင်ရန် / Ban)</h3>
+      <div id="adminUserList" class="space-y-2 text-xs max-h-48 overflow-y-auto"></div>
+    </div>
+
+    <!-- Myanmar Sakar Htar / Riddle Manager -->
+    <div class="glass p-5 rounded-2xl space-y-3">
+      <h3 class="font-bold text-sm text-emerald-300">🏮 ၄။ မြန်မာ့စကားထာနှင့် ပဟေဠိ မေးခွန်းများ စီမံရန်</h3>
       <div class="grid md:grid-cols-2 gap-2 text-xs">
-        <input id="newQuizQ" type="text" placeholder="မေးခွန်း ရေးပါ..." class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700" />
-        <input id="newQuizOpts" type="text" placeholder="ရွေးချယ်စရာ ၄ ခု (ကော်မာခံပါ ဥပမာ- ဆင်,မြင်း,ကျား,နွား)" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700" />
+        <input id="newQuizQ" type="text" placeholder="စကားထာ / မေးခွန်း ရေးပါ..." class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700" />
+        <input id="newQuizOpts" type="text" placeholder="ရွေးချယ်စရာ ၄ ခု (ကော်မာခံပါ ဥပမာ- စားပွဲခုံ,ဆင်,လိပ်,မြင်း)" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700" />
       </div>
       <div class="flex gap-2 items-center text-xs">
-        <input id="newQuizAns" type="number" min="0" max="3" value="0" class="w-28 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700" placeholder="အဖြေမှန် Index (0-3)" />
+        <input id="newQuizAns" type="number" min="0" max="3" value="0" class="w-32 px-3 py-2 rounded-xl bg-slate-950 border border-slate-700" placeholder="အဖြေမှန် (0-3)" />
         <button onclick="adminAddQuizQuestion()" class="px-4 py-2 rounded-xl bg-emerald-600 font-bold">+ မေးခွန်းထည့်မည်</button>
       </div>
-      <div id="adminQuizList" class="text-xs text-slate-400 max-h-40 overflow-y-auto space-y-1 pt-2"></div>
+      <div id="adminQuizList" class="text-xs text-slate-400 max-h-40 overflow-y-auto space-y-1 pt-1"></div>
     </div>
   </section>
 
+  <!-- PLAYER PROFILE MODAL -->
+  <div id="playerModal" class="fixed inset-0 bg-black/75 z-50 hidden items-center justify-center p-4">
+    <div class="glass max-w-sm w-full rounded-2xl p-6 space-y-4 border border-indigo-500/40">
+      <div id="playerModalBody"></div>
+      <button onclick="closePlayerModal()" class="w-full py-2 rounded-xl bg-slate-800 text-xs font-bold">ပိတ်မည်</button>
+    </div>
+  </div>
+
+  <!-- RANK GUIDE MODAL -->
+  <div id="rankGuideModal" class="fixed inset-0 bg-black/75 z-50 hidden items-center justify-center p-4">
+    <div class="glass max-w-sm w-full rounded-2xl p-6 space-y-3 border border-amber-500/40 text-xs">
+      <h3 class="text-base font-bold text-amber-300">🏅 Vanguard Rank အဆင့်သတ်မှတ်ချက်များ</h3>
+      <div class="space-y-2">
+        <div class="p-2.5 rounded-xl bg-slate-950 flex justify-between"><span>🥉 Bronze Tier</span><span class="text-slate-400">0 – 1099 RP</span></div>
+        <div class="p-2.5 rounded-xl bg-slate-950 flex justify-between"><span>🥈 Silver Tier</span><span class="text-slate-300">1100 – 1299 RP</span></div>
+        <div class="p-2.5 rounded-xl bg-slate-950 flex justify-between"><span>🥇 Gold Tier</span><span class="text-amber-300">1300 – 1599 RP</span></div>
+        <div class="p-2.5 rounded-xl bg-slate-950 flex justify-between"><span>💎 Diamond Tier</span><span class="text-sky-300">1600 – 1999 RP</span></div>
+        <div class="p-2.5 rounded-xl bg-slate-950 flex justify-between"><span>👑 Legend Tier</span><span class="text-rose-400 font-bold">2000+ RP</span></div>
+      </div>
+      <button onclick="document.getElementById('rankGuideModal').classList.add('hidden')" class="w-full py-2 rounded-xl bg-indigo-600 font-bold mt-2">နားလည်ပါပြီ</button>
+    </div>
+  </div>
+
   <script>
     /********************************************************************
-     * CORE STATE & REAL-TIME CLOUD SYNC (LOCAL + FIREBASE REST ENGINE)
+     * 1. FIREBASE REALTIME DATABASE URL (Paste your URL inside quotes)
      ********************************************************************/
-    const STORAGE_KEY = 'MM_CYBER_ARENA_STATE_V2';
-    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('mm_arena_channel') : null;
+    const DEFAULT_FIREBASE_URL = "";
+
+    const STORAGE_KEY = 'VANGUARD_ARENA_STATE_V3';
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('vanguard_arena_bus') : null;
+    let soundEnabled = true;
 
     const DEFAULT_QUIZZES = [
       { q: 'ခြေလေးချောင်းရှိသော်လည်း လမ်းမလျှောက်နိုင်သော အရာမှာ အဘယ်နည်း။', opts: ['စားပွဲခုံ', 'ဆင်', 'လိပ်', 'မြင်း'], ans: 0 },
       { q: 'အပေါ်ကလည်း မိုး၊ အောက်ကလည်း မိုး၊ အလယ်က အဘိုးအို ခါးကုန်းကုန်း ဆိုသည်မှာ အဘယ်နည်း။', opts: ['လိပ်', 'ဖား', 'ပုစွန်', 'ခရု'], ans: 0 },
-      { q: 'မြန်မာ့ရိုးရာ သင်္ကြန်ပွဲတော်တွင် အဓိက ပွင့်လန်းသော ပန်းမှာ အဘယ်နည်း။', opts: ['ပိတောက်ပန်း', 'စံပယ်ပန်း', 'နှင်းဆီပန်း', 'ကြာပန်း'], ans: 0 },
-      { q: 'သွားလည်း သွားသည်၊ ရပ်လည်း ရပ်သည်၊ သို့သော် ခြေထောက်မရှိသော အရာမှာ အဘယ်နည်း။', opts: ['နာရီ', 'လှည်း', 'စက်ဘီး', 'လေယာဉ်'], ans: 0 },
-      { q: 'ပုဂံခေတ်ကို စတင်တည်ထောင်ခဲ့သော မင်းကြီးမှာ မည်သူနည်း။', opts: ['အနော်ရထာမင်း', 'ကျန်စစ်သားမင်း', 'ဘုရင့်နောင်', 'အလောင်းဘုရား'], ans: 0 }
+      { q: 'သွားလည်း သွားသည်၊ ရပ်လည်း ရပ်သည်၊ ခြေထောက်မရှိသော အရာမှာ အဘယ်နည်း။', opts: ['နာရီ', 'လှည်း', 'စက်ဘီး', 'လေယာဉ်'], ans: 0 },
+      { q: 'အမေက ဖြူဖြူ၊ သားက မည်းမည်း၊ သားက အမေ့ကို ပြန်ကိုက်သည် ဆိုသည်မှာ အဘယ်နည်း။', opts: ['မီးခြစ်ဆံ', 'ကျီးကန်း', 'မီးသွေး', 'ဖယောင်းတိုင်'], ans: 0 },
+      { q: 'မြန်မာ့ရိုးရာ သင်္ကြန်ပွဲတော်တွင် အဓိက ပွင့်လန်းသော ပန်းမှာ အဘယ်နည်း။', opts: ['ပိတောက်ပန်း', 'စံပယ်ပန်း', 'နှင်းဆီပန်း', 'ကြာပန်း'], ans: 0 }
     ];
 
-    let appState = loadState();
+    let appState = loadInitialState();
     let currentUser = null;
     let playMode = 'solo';
+    let activeRoomId = null;
     let activeChatPartnerId = null;
 
-    function loadState() {
+    function loadInitialState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (DEFAULT_FIREBASE_URL && !parsed.config.firebaseUrl) {
+            parsed.config.firebaseUrl = DEFAULT_FIREBASE_URL;
+          }
+          return parsed;
+        }
       } catch (e) {}
       return {
         config: {
-          firebaseUrl: 'https://arena-25951-default-rtdb.asia-southeast1.firebasedatabase.app',
-          announcement: 'မင်္ဂလာပါ! Myanmar Cyber Arena မှ ကြိုဆိုပါတယ်။',
-          maintenance: false
+          firebaseUrl: DEFAULT_FIREBASE_URL,
+          announcement: 'Vanguard Cyber Arena မှ ကြိုဆိုပါတယ်! Solo AI သို့မဟုတ် Online 1v1 ယှဉ်ပြိုင်ကစားနိုင်ပါပြီ။',
+          maintenance: false,
+          enabledGames: { rps: true, ttt: true, c4: true, quiz: true }
         },
         users: {
           'yanlinnaung': {
             username: 'yanlinnaung',
             password: '163104',
-            displayName: 'Master Admin (Yan Lin Naung)',
+            displayName: 'Yan Lin Naung (Master)',
             gameId: 'MM-163104',
             avatar: '👑',
-            bio: 'Game Server Administrator',
-            rp: 2500,
-            wins: 50,
-            losses: 2,
+            bio: 'Vanguard Cyber Arena Administrator',
+            rp: 2450,
+            wins: 48,
+            losses: 3,
             isAdmin: true,
+            banned: false,
             friends: [],
             blocked: []
           },
-          'aung_kyaw': {
-            username: 'aung_kyaw',
+          'thura_mm': {
+            username: 'thura_mm',
             password: '123',
-            displayName: 'Aung Kyaw',
-            gameId: 'MM-882104',
+            displayName: 'Thura Zaw',
+            gameId: 'MM-742910',
             avatar: '🐯',
-            bio: 'RPS & Tic-Tac-Toe ချန်ပီယံ',
-            rp: 1450,
-            wins: 18,
-            losses: 5,
+            bio: 'Connect 4 & စကားထာ ချန်ပီယံ',
+            rp: 1420,
+            wins: 19,
+            losses: 6,
             isAdmin: false,
+            banned: false,
             friends: [],
             blocked: []
           }
@@ -472,79 +562,137 @@
         rooms: {},
         messages: [],
         tournament: {
-          name: 'Myanmar Grand Cup #1',
+          name: 'Vanguard Grand Cup #1',
           game: 'rps',
-          prize: 200,
-          players: ['MM-882104'],
+          prize: 250,
+          players: ['MM-742910'],
           matches: [],
           winner: null
         }
       };
     }
 
+    function playTone(freq = 520, duration = 0.08) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.value = freq;
+        gain.gain.value = 0.06;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        setTimeout(() => { osc.stop(); ctx.close(); }, duration * 1000);
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
     async function saveState(pushCloud = true) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {}
       if (syncChannel) syncChannel.postMessage(appState);
-      if (pushCloud && appState.config.firebaseUrl) {
+
+      const url = (appState.config.firebaseUrl || DEFAULT_FIREBASE_URL || '').replace(/\/$/, '');
+      if (pushCloud && url) {
         try {
-          const base = appState.config.firebaseUrl.replace(/\/$/, '');
-          await fetch(`${base}/arenaState.json`, {
+          const res = await fetch(`${url}/vanguardArena.json`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(appState)
           });
-        } catch (err) {}
+          document.getElementById('cloudStatusDot').className = res.ok
+            ? 'inline-block w-2 h-2 rounded-full bg-emerald-400'
+            : 'inline-block w-2 h-2 rounded-full bg-rose-500';
+        } catch (err) {
+          document.getElementById('cloudStatusDot').className = 'inline-block w-2 h-2 rounded-full bg-rose-500';
+        }
       }
       refreshUI();
     }
 
     if (syncChannel) {
       syncChannel.onmessage = (ev) => {
-        if (ev.data) {
+        if (ev.data && ev.data.users) {
           appState = ev.data;
-          if (currentUser) currentUser = appState.users[currentUser.username];
+          if (currentUser && appState.users[currentUser.username]) {
+            currentUser = appState.users[currentUser.username];
+          }
           refreshUI();
         }
       };
     }
 
-    // Poll Cloud Firebase every 3 seconds if URL is configured
+    // Real-Time Cloud Sync Polling (Every 2.5 seconds)
     setInterval(async () => {
-      if (!appState.config.firebaseUrl) return;
+      const url = (appState.config.firebaseUrl || DEFAULT_FIREBASE_URL || '').replace(/\/$/, '');
+      if (!url) return;
       try {
-        const base = appState.config.firebaseUrl.replace(/\/$/, '');
-        const res = await fetch(`${base}/arenaState.json`);
+        const res = await fetch(`${url}/vanguardArena.json`);
         if (res.ok) {
           const remote = await res.json();
           if (remote && remote.users) {
             appState = remote;
-            if (currentUser) currentUser = appState.users[currentUser.username];
+            if (!appState.rooms) appState.rooms = {};
+            if (!appState.messages) appState.messages = [];
+            if (currentUser && appState.users[currentUser.username]) {
+              currentUser = appState.users[currentUser.username];
+            }
             localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            document.getElementById('cloudStatusDot').className = 'inline-block w-2 h-2 rounded-full bg-emerald-400';
             refreshUI();
           }
         }
       } catch (e) {}
-    }, 3000);
+    }, 2500);
 
     /********************************************************************
-     * STEALTH ADMIN & PLAYER UNIFIED LOGIN
+     * 2. UNIFIED LOGIN & STEALTH ADMIN ROUTING
      ********************************************************************/
     function handleUnifiedLogin() {
-      const u = document.getElementById('loginUsername').value.trim().toLowerCase();
+      const rawUser = document.getElementById('loginUsername').value.trim();
+      const u = rawUser.toLowerCase();
       const p = document.getElementById('loginPassword').value.trim();
       const errEl = document.getElementById('loginError');
 
       if (!u || !p) {
-        errEl.textContent = 'အမည်နှင့် စကားဝှက် ပြည့်စုံစွာ ရိုက်ထည့်ပါ။';
+        errEl.textContent = 'အကောင့်အမည်နှင့် စကားဝှက် ပြည့်စုံစွာ ရိုက်ထည့်ပါ။';
         errEl.classList.remove('hidden');
         return;
       }
 
-      // Stealth Admin Check: username = yanlinnaung, pass = 163104
+      // Stealth Admin Authentication
       if (u === 'yanlinnaung' && p === '163104') {
+        if (!appState.users['yanlinnaung']) {
+          appState.users['yanlinnaung'] = {
+            username: 'yanlinnaung',
+            password: '163104',
+            displayName: 'Yan Lin Naung (Master)',
+            gameId: 'MM-163104',
+            avatar: '👑',
+            bio: 'Master Administrator',
+            rp: 2450,
+            wins: 48,
+            losses: 3,
+            isAdmin: true,
+            banned: false,
+            friends: [],
+            blocked: []
+          };
+        }
         appState.users['yanlinnaung'].isAdmin = true;
         currentUser = appState.users['yanlinnaung'];
       } else if (appState.users[u]) {
+        if (appState.users[u].banned) {
+          errEl.textContent = 'ဤအကောင့်ကို Admin မှ ယာယီပိတ်သိမ်းထားပါသည်။';
+          errEl.classList.remove('hidden');
+          return;
+        }
         if (appState.users[u].password !== p) {
           errEl.textContent = 'စကားဝှက် မှားယွင်းနေပါသည်။';
           errEl.classList.remove('hidden');
@@ -552,44 +700,44 @@
         }
         currentUser = appState.users[u];
       } else {
-        // Auto-register new player with unique Game ID
-        const randomId = 'MM-' + Math.floor(100000 + Math.random() * 900000);
+        const newId = 'MM-' + Math.floor(100000 + Math.random() * 900000);
         appState.users[u] = {
           username: u,
           password: p,
-          displayName: document.getElementById('loginUsername').value.trim(),
-          gameId: randomId,
+          displayName: rawUser,
+          gameId: newId,
           avatar: '🐉',
-          bio: 'မင်္ဂလာပါ! ပြိုင်ပွဲဝင် ကစားသမားသစ် ဖြစ်ပါတယ်။',
+          bio: 'Vanguard Arena ပြိုင်ပွဲဝင် ကစားသမား',
           rp: 1000,
           wins: 0,
           losses: 0,
           isAdmin: false,
+          banned: false,
           friends: [],
           blocked: []
         };
         currentUser = appState.users[u];
       }
 
+      playTone(660, 0.12);
       errEl.classList.add('hidden');
       document.getElementById('authScreen').classList.add('hidden');
       document.getElementById('topNav').classList.remove('hidden');
 
-      // Show Admin button ONLY if logged in as yanlinnaung
       const adminBtn = document.getElementById('adminSwitchBtn');
       if (currentUser.isAdmin) {
         adminBtn.classList.remove('hidden');
-        switchMainView('admin'); // Takes Admin directly to Control Panel + Arena access
+        switchMainView('admin');
       } else {
         adminBtn.classList.add('hidden');
         switchMainView('arena');
       }
-
       saveState();
     }
 
     function logoutUser() {
       currentUser = null;
+      activeRoomId = null;
       document.getElementById('topNav').classList.add('hidden');
       document.getElementById('arenaView').classList.add('hidden');
       document.getElementById('adminView').classList.add('hidden');
@@ -605,31 +753,34 @@
     }
 
     function openTab(tabId) {
+      playTone(480, 0.05);
       ['tabGames', 'tabTourney', 'tabRank', 'tabSocial', 'tabProfile'].forEach(id => {
         document.getElementById(id).classList.toggle('hidden', id !== tabId);
         const btn = document.getElementById('btn-' + id);
-        if (id === tabId) {
-          btn.className = 'tab-btn py-2.5 rounded-lg bg-indigo-600 text-white';
-        } else {
-          btn.className = 'tab-btn py-2.5 rounded-lg text-slate-300 hover:bg-slate-800';
-        }
+        btn.className = (id === tabId)
+          ? 'tab-btn py-2.5 rounded-xl bg-indigo-600 text-white shadow'
+          : 'tab-btn py-2.5 rounded-xl text-slate-300 hover:bg-slate-800';
       });
       refreshUI();
     }
 
+    function openRankGuide() {
+      document.getElementById('rankGuideModal').classList.remove('hidden');
+      document.getElementById('rankGuideModal').classList.add('flex');
+    }
+
     /********************************************************************
-     * RANKING TIER HELPER & GLOBAL UI REFRESH
+     * 3. RANKING TIER, AVATAR FRAMES & UI REFRESH
      ********************************************************************/
-    function getRankTier(rp) {
-      if (rp >= 2000) return '👑 Legend';
-      if (rp >= 1600) return '💎 Diamond';
-      if (rp >= 1300) return '🥇 Gold';
-      if (rp >= 1100) return '🥈 Silver';
-      return '🥉 Bronze';
+    function getRankInfo(rp) {
+      if (rp >= 2000) return { label: '👑 Legend', frame: 'frame-legend' };
+      if (rp >= 1600) return { label: '💎 Diamond', frame: 'frame-diamond' };
+      if (rp >= 1300) return { label: '🥇 Gold', frame: 'frame-gold' };
+      if (rp >= 1100) return { label: '🥈 Silver', frame: 'frame-silver' };
+      return { label: '🥉 Bronze', frame: 'frame-bronze' };
     }
 
     function refreshUI() {
-      // Announcement bar
       const annBar = document.getElementById('announcementBar');
       if (appState.config.announcement) {
         annBar.classList.remove('hidden');
@@ -640,26 +791,43 @@
 
       if (!currentUser) return;
 
-      // Top Header
-      document.getElementById('navAvatar').textContent = currentUser.avatar;
+      const rInfo = getRankInfo(currentUser.rp);
+      const navAv = document.getElementById('navAvatar');
+      navAv.textContent = currentUser.avatar;
+      navAv.className = `w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xl ${rInfo.frame}`;
       document.getElementById('navName').textContent = currentUser.displayName;
       document.getElementById('navGameId').textContent = currentUser.gameId;
       document.getElementById('navRp').textContent = currentUser.rp + ' RP';
-      document.getElementById('navRankBadge').textContent = getRankTier(currentUser.rp);
+      document.getElementById('navRankBadge').textContent = rInfo.label;
 
-      // Maintenance Check
+      // Maintenance & Enabled Games
       const isMaint = appState.config.maintenance && !currentUser.isAdmin;
       document.getElementById('maintenanceNotice').classList.toggle('hidden', !isMaint);
-      document.getElementById('lobbyCards').classList.toggle('hidden', isMaint);
+      if (isMaint) {
+        document.getElementById('lobbyCards').classList.add('hidden');
+      } else if (document.getElementById('activeGameStage').classList.contains('hidden')) {
+        document.getElementById('lobbyCards').classList.remove('hidden');
+      }
+
+      const eg = appState.config.enabledGames || { rps: true, ttt: true, c4: true, quiz: true };
+      ['rps', 'ttt', 'c4', 'quiz'].forEach(g => {
+        const card = document.getElementById('card-' + g);
+        if (card) card.classList.toggle('opacity-40', !eg[g]);
+      });
 
       // Profile Tab
-      document.getElementById('profAvatarBig').textContent = currentUser.avatar;
+      const profAv = document.getElementById('profAvatarBig');
+      profAv.textContent = currentUser.avatar;
+      profAv.className = `w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-4xl ${rInfo.frame}`;
       document.getElementById('profTitleName').textContent = currentUser.displayName;
       document.getElementById('profGameId').textContent = currentUser.gameId;
-      document.getElementById('profRankText').textContent = `${getRankTier(currentUser.rp)} • ${currentUser.rp} RP`;
-      document.getElementById('profTotal').textContent = (currentUser.wins + currentUser.losses);
+      document.getElementById('profRankText').textContent = `${rInfo.label} • ${currentUser.rp} RP`;
+
+      const totalGames = currentUser.wins + currentUser.losses;
+      document.getElementById('profTotal').textContent = totalGames;
       document.getElementById('profWins').textContent = currentUser.wins;
       document.getElementById('profLosses').textContent = currentUser.losses;
+      document.getElementById('profWinRate').textContent = totalGames ? Math.round((currentUser.wins / totalGames) * 100) + '%' : '0%';
 
       if (document.activeElement.id !== 'editDisplayName') {
         document.getElementById('editDisplayName').value = currentUser.displayName;
@@ -671,42 +839,83 @@
       renderRankingTable();
       renderSocialLists();
       renderTournamentBracket();
-      if (currentUser.isAdmin) renderAdminInputs();
+      if (activeRoomId && playMode === 'online') renderOnlineRoomStage();
+      if (currentUser.isAdmin) renderAdminPanelData();
     }
 
     function renderRankingTable() {
       const tbody = document.getElementById('rankingTableBody');
-      const list = Object.values(appState.users).sort((a, b) => b.rp - a.rp);
-      tbody.innerHTML = list.map((u, idx) => `
-        <tr class="${u.username === currentUser.username ? 'bg-indigo-950/40 font-bold' : ''}">
-          <td class="py-2.5 px-2">${idx + 1}</td>
-          <td class="py-2.5 px-2 flex items-center gap-2">
-            <span>${u.avatar}</span>
-            <span>${u.displayName}</span>
-          </td>
-          <td class="py-2.5 px-2 font-mono text-indigo-400">${u.gameId}</td>
-          <td class="py-2.5 px-2">${getRankTier(u.rp)}</td>
-          <td class="py-2.5 px-2 text-emerald-400">${u.wins}W / <span class="text-rose-400">${u.losses}L</span></td>
-          <td class="py-2.5 px-2 text-right font-bold text-amber-300">${u.rp} RP</td>
-        </tr>
-      `).join('');
+      const sorted = Object.values(appState.users).sort((a, b) => b.rp - a.rp);
+      tbody.innerHTML = sorted.map((u, i) => {
+        const ri = getRankInfo(u.rp);
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+        return `
+          <tr onclick="openPlayerModal('${u.username}')" class="cursor-pointer hover:bg-indigo-950/50 transition ${u.username === currentUser.username ? 'bg-indigo-950/30 font-bold' : ''}">
+            <td class="py-3 px-2 font-bold">${medal}</td>
+            <td class="py-3 px-2 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-full bg-slate-800 inline-flex items-center justify-center ${ri.frame}">${u.avatar}</span>
+              <span>${u.displayName}</span>
+            </td>
+            <td class="py-3 px-2 font-mono text-indigo-400">${u.gameId}</td>
+            <td class="py-3 px-2">${ri.label}</td>
+            <td class="py-3 px-2 text-emerald-400">${u.wins}W / <span class="text-rose-400">${u.losses}L</span></td>
+            <td class="py-3 px-2 text-right font-bold text-amber-300">${u.rp} RP</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     /********************************************************************
-     * PROFILE & SOCIAL (SEARCH BY GAME ID, ADD FRIEND, BLOCK, CHAT)
+     * 4. PROFILE & SOCIAL HUB (SEARCH, ADD, BLOCK, DIRECT CHAT)
      ********************************************************************/
+    function copyMyGameId() {
+      navigator.clipboard?.writeText(currentUser.gameId);
+      alert('Game ID (' + currentUser.gameId + ') ကို Copy ကူးပြီးပါပြီ။');
+    }
+
     function selectProfileAvatar(emoji) {
       currentUser.avatar = emoji;
+      playTone(600, 0.06);
       saveState();
     }
 
     function saveProfileChanges() {
-      const newName = document.getElementById('editDisplayName').value.trim();
-      const newBio = document.getElementById('editBio').value.trim();
-      if (newName) currentUser.displayName = newName;
-      currentUser.bio = newBio;
+      const name = document.getElementById('editDisplayName').value.trim();
+      const bio = document.getElementById('editBio').value.trim();
+      if (name) currentUser.displayName = name;
+      currentUser.bio = bio;
       saveState();
-      alert('Profile အချက်အလက်များကို သိမ်းဆည်းပြီးပါပြီ။');
+      alert('Profile အချက်အလက်များ သိမ်းဆည်းပြီးပါပြီ။');
+    }
+
+    function openPlayerModal(username) {
+      const u = appState.users[username];
+      if (!u) return;
+      const ri = getRankInfo(u.rp);
+      const isMe = u.username === currentUser.username;
+      document.getElementById('playerModalBody').innerHTML = `
+        <div class="text-center space-y-2">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-800 flex items-center justify-center text-4xl ${ri.frame}">${u.avatar}</div>
+          <h3 class="text-lg font-bold">${u.displayName}</h3>
+          <div class="text-xs font-mono text-indigo-400">${u.gameId} • ${ri.label} (${u.rp} RP)</div>
+          <p class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-xl">${u.bio || 'Bio မရှိသေးပါ'}</p>
+          <div class="text-xs text-slate-400">နိုင်ပွဲ: <b class="text-emerald-400">${u.wins}</b> • ရှုံးပွဲ: <b class="text-rose-400">${u.losses}</b></div>
+        </div>
+        ${isMe ? '' : `
+          <div class="grid grid-cols-3 gap-2 pt-3 text-xs font-bold">
+            <button onclick="addFriend('${u.gameId}'); closePlayerModal();" class="py-2 rounded-xl bg-indigo-600">+ Add</button>
+            <button onclick="addFriend('${u.gameId}'); openTab('tabSocial'); openChatWith('${u.gameId}'); closePlayerModal();" class="py-2 rounded-xl bg-emerald-600">💬 စာပို့</button>
+            <button onclick="blockPlayer('${u.gameId}'); closePlayerModal();" class="py-2 rounded-xl bg-rose-700">🚫 Block</button>
+          </div>
+        `}
+      `;
+      document.getElementById('playerModal').classList.remove('hidden');
+      document.getElementById('playerModal').classList.add('flex');
+    }
+
+    function closePlayerModal() {
+      document.getElementById('playerModal').classList.add('hidden');
+      document.getElementById('playerModal').classList.remove('flex');
     }
 
     function searchPlayerById() {
@@ -714,28 +923,23 @@
       const box = document.getElementById('searchResultBox');
       if (!q) return;
 
-      const matches = Object.values(appState.users).filter(u =>
+      const results = Object.values(appState.users).filter(u =>
         u.username !== currentUser.username &&
         (u.gameId.toLowerCase().includes(q) || u.displayName.toLowerCase().includes(q))
       );
 
-      if (!matches.length) {
-        box.innerHTML = `<div class="p-3 rounded-xl bg-slate-900 text-rose-400">ကစားသမား ရှာမတွေ့ပါ။</div>`;
-        return;
-      }
-
-      box.innerHTML = matches.map(u => `
-        <div class="p-3 rounded-xl bg-slate-900 flex items-center justify-between">
+      box.innerHTML = results.length ? results.map(u => `
+        <div class="p-3 rounded-xl bg-slate-950 flex items-center justify-between">
           <div>
             <div class="font-bold">${u.avatar} ${u.displayName} <span class="text-indigo-400 font-mono">(${u.gameId})</span></div>
-            <div class="text-[11px] text-slate-400">${u.bio || ''} • ${getRankTier(u.rp)}</div>
+            <div class="text-[11px] text-slate-400">${getRankInfo(u.rp).label} • ${u.rp} RP</div>
           </div>
           <div class="flex gap-1.5">
-            <button onclick="addFriend('${u.gameId}')" class="px-2.5 py-1 rounded bg-indigo-600 text-[11px] font-bold">+ Add</button>
-            <button onclick="blockPlayer('${u.gameId}')" class="px-2.5 py-1 rounded bg-rose-700 text-[11px] font-bold">Block</button>
+            <button onclick="addFriend('${u.gameId}')" class="px-2.5 py-1 rounded-lg bg-indigo-600 font-bold">+ Add</button>
+            <button onclick="blockPlayer('${u.gameId}')" class="px-2.5 py-1 rounded-lg bg-rose-700 font-bold">Block</button>
           </div>
         </div>
-      `).join('');
+      `).join('') : `<div class="p-3 rounded-xl bg-slate-950 text-rose-400">ကစားသမား ရှာမတွေ့ပါ။</div>`;
     }
 
     function addFriend(gameId) {
@@ -763,20 +967,20 @@
       const bBox = document.getElementById('blockedListBox');
       const allUsers = Object.values(appState.users);
 
-      const friends = (currentUser.friends || []).map(fid => allUsers.find(u => u.gameId === fid)).filter(Boolean);
+      const friends = (currentUser.friends || []).map(id => allUsers.find(u => u.gameId === id)).filter(Boolean);
       fBox.innerHTML = friends.length ? friends.map(u => `
-        <div class="p-2.5 rounded-xl bg-slate-900 flex items-center justify-between">
+        <div class="p-2.5 rounded-xl bg-slate-950 flex items-center justify-between">
           <span>${u.avatar} <b>${u.displayName}</b> <span class="text-slate-400 font-mono">(${u.gameId})</span></span>
           <div class="flex gap-1.5">
-            <button onclick="openChatWith('${u.gameId}')" class="px-2.5 py-1 rounded bg-emerald-600 font-bold">💬 စာပို့မည်</button>
-            <button onclick="blockPlayer('${u.gameId}')" class="px-2 py-1 rounded bg-slate-800 text-rose-400">Block</button>
+            <button onclick="openChatWith('${u.gameId}')" class="px-2.5 py-1 rounded-lg bg-emerald-600 font-bold">💬 စာပို့</button>
+            <button onclick="blockPlayer('${u.gameId}')" class="px-2 py-1 rounded-lg bg-slate-800 text-rose-400">Block</button>
           </div>
         </div>
       `).join('') : `<p class="text-slate-500">သူငယ်ချင်း မရှိသေးပါ။ Game ID ဖြင့် ရှာပြီး Add နှိပ်ပါ။</p>`;
 
-      const blocked = (currentUser.blocked || []).map(bid => allUsers.find(u => u.gameId === bid)).filter(Boolean);
+      const blocked = (currentUser.blocked || []).map(id => allUsers.find(u => u.gameId === id)).filter(Boolean);
       bBox.innerHTML = blocked.length ? blocked.map(u => `
-        <div class="p-2 rounded-xl bg-slate-900 flex items-center justify-between">
+        <div class="p-2 rounded-xl bg-slate-950 flex items-center justify-between">
           <span>🚫 ${u.displayName} (${u.gameId})</span>
           <button onclick="unblockPlayer('${u.gameId}')" class="px-2 py-0.5 rounded bg-slate-800 text-emerald-400">Unblock</button>
         </div>
@@ -798,7 +1002,7 @@
 
       const partner = Object.values(appState.users).find(u => u.gameId === activeChatPartnerId);
       if (partner && (partner.blocked || []).includes(currentUser.gameId)) {
-        alert('တစ်ဖက်ကစားသမားမှ သင့်ကို Block ထားသောကြောင့် စာပို့၍ မရပါ။');
+        alert('တစ်ဖက်ကစားသမားမှ သင့်ကို Block ထားပါသည်။');
         return;
       }
 
@@ -809,6 +1013,7 @@
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       });
       input.value = '';
+      playTone(580, 0.06);
       saveState();
     }
 
@@ -819,7 +1024,7 @@
 
       const partner = Object.values(appState.users).find(u => u.gameId === activeChatPartnerId);
       if (!partner) return;
-      title.textContent = `💬 ${partner.avatar} ${partner.displayName} (${partner.gameId}) နှင့် စကားပြောခန်း`;
+      title.textContent = `💬 ${partner.avatar} ${partner.displayName} (${partner.gameId})`;
 
       const msgs = (appState.messages || []).filter(m =>
         (m.from === currentUser.gameId && m.to === activeChatPartnerId) ||
@@ -830,228 +1035,459 @@
         const mine = m.from === currentUser.gameId;
         return `
           <div class="flex ${mine ? 'justify-end' : 'justify-start'}">
-            <div class="max-w-[75%] px-3 py-2 rounded-xl ${mine ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-200'}">
+            <div class="max-w-[78%] px-3 py-2 rounded-2xl ${mine ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-200'}">
               <div>${m.text}</div>
               <div class="text-[9px] opacity-60 text-right mt-0.5">${m.time}</div>
             </div>
           </div>
         `;
-      }).join('') : `<p class="text-slate-500 text-center mt-8">စာတို စတင်ပေးပို့နိုင်ပါပြီ။</p>`;
+      }).join('') : `<p class="text-slate-500 text-center mt-12">စာတို စတင်ပေးပို့နိုင်ပါပြီ။</p>`;
       box.scrollTop = box.scrollHeight;
     }
 
     /********************************************************************
-     * 3 REAL-TIME & SOLO GAMES ENGINE (RPS, TIC-TAC-TOE, MYANMAR QUIZ)
+     * 5. 4 GAMES ENGINE (SOLO AI + REAL-TIME 1V1 MULTIPLAYER ROOMS)
      ********************************************************************/
     function setPlayMode(mode) {
       playMode = mode;
       document.getElementById('modeSoloBtn').className = mode === 'solo'
-        ? 'px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold'
-        : 'px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold';
+        ? 'px-4 py-2.5 rounded-xl bg-indigo-600 text-xs font-bold shadow'
+        : 'px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold';
       document.getElementById('modeOnlineBtn').className = mode === 'online'
-        ? 'px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold'
-        : 'px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold';
+        ? 'px-4 py-2.5 rounded-xl bg-emerald-600 text-xs font-bold shadow'
+        : 'px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs font-bold';
       document.getElementById('onlineRoomBar').classList.toggle('hidden', mode !== 'online');
       document.getElementById('onlineRoomBar').classList.toggle('flex', mode === 'online');
     }
 
+    function generateRandomRoom() {
+      document.getElementById('roomCodeInput').value = 'ARENA-' + Math.floor(10 + Math.random() * 89);
+    }
+
     function launchGame(gameType) {
+      const eg = appState.config.enabledGames || { rps: true, ttt: true, c4: true, quiz: true };
+      if (!eg[gameType] && !currentUser.isAdmin) {
+        alert('ဤကစားနည်းကို Admin မှ ခေတ္တပိတ်ထားပါသည်။');
+        return;
+      }
+
       document.getElementById('lobbyCards').classList.add('hidden');
       document.getElementById('activeGameStage').classList.remove('hidden');
-      document.getElementById('stageModeBadge').textContent = playMode === 'solo' ? '🤖 Solo AI' : '🌐 Room: ' + document.getElementById('roomCodeInput').value;
 
-      if (gameType === 'rps') initRPSGame();
-      if (gameType === 'ttt') initTTTGame();
-      if (gameType === 'quiz') initQuizGame();
+      if (playMode === 'online') {
+        const code = (document.getElementById('roomCodeInput').value.trim().toUpperCase() || 'ARENA-1') + '_' + gameType;
+        joinOrCreateOnlineRoom(code, gameType);
+        return;
+      }
+
+      activeRoomId = null;
+      document.getElementById('stageModeBadge').textContent = '🤖 Solo AI';
+      if (gameType === 'rps') initSoloRPS();
+      if (gameType === 'ttt') initSoloTTT();
+      if (gameType === 'c4') initSoloC4();
+      if (gameType === 'quiz') initSoloQuiz();
     }
 
     function closeGameStage() {
+      activeRoomId = null;
       document.getElementById('activeGameStage').classList.add('hidden');
       document.getElementById('lobbyCards').classList.remove('hidden');
     }
 
     function applyMatchResult(won, rpDelta) {
+      playTone(won ? 780 : 240, 0.2);
       if (won) {
         currentUser.wins += 1;
         currentUser.rp += rpDelta;
       } else {
         currentUser.losses += 1;
-        currentUser.rp = Math.max(100, currentUser.rp - Math.floor(rpDelta * 0.6));
+        currentUser.rp = Math.max(100, currentUser.rp - Math.floor(rpDelta * 0.5));
       }
       saveState();
     }
 
-    /* ---------------- GAME 1: ROCK PAPER SCISSORS ---------------- */
-    let rpsScore = { me: 0, opp: 0 };
-    function initRPSGame() {
-      rpsScore = { me: 0, opp: 0 };
-      document.getElementById('stageTitle').textContent = '✌️ ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး (Best of 3)';
-      renderRPSStage('သင်ကြိုက်နှစ်သက်ရာ လက်သင်္ကေတကို ရွေးချယ်ပါ။');
-    }
+    /* ---------------- REAL-TIME ONLINE 1V1 ROOM ENGINE ---------------- */
+    function joinOrCreateOnlineRoom(roomId, gameType) {
+      activeRoomId = roomId;
+      appState.rooms = appState.rooms || {};
+      let room = appState.rooms[roomId];
 
-    function renderRPSStage(statusMsg) {
-      document.getElementById('stageBody').innerHTML = `
-        <div class="text-center space-y-5 py-4">
-          <div class="flex justify-center gap-12 text-lg font-bold">
-            <div class="text-emerald-400">သင်: ${rpsScore.me}</div>
-            <div class="text-rose-400">ပြိုင်ဘက်: ${rpsScore.opp}</div>
-          </div>
-          <p class="text-sm text-indigo-300 font-bold">${statusMsg}</p>
-          <div class="flex justify-center gap-4">
-            <button onclick="playRPSRound('🪨 ကျောက်တုံး')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl font-bold transition">🪨<div class="text-xs mt-1">ကျောက်တုံး</div></button>
-            <button onclick="playRPSRound('📄 စက္ကူ')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl font-bold transition">📄<div class="text-xs mt-1">စက္ကူ</div></button>
-            <button onclick="playRPSRound('✌️ ကတ်ကြေး')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl font-bold transition">✌️<div class="text-xs mt-1">ကတ်ကြေး</div></button>
-          </div>
-        </div>
-      `;
-    }
-
-    function playRPSRound(myPick) {
-      const choices = ['🪨 ကျောက်တုံး', '📄 စက္ကူ', '✌️ ကတ်ကြေး'];
-      const oppPick = choices[Math.floor(Math.random() * 3)];
-      let msg = `သင် (${myPick}) vs ပြိုင်ဘက် (${oppPick}) — `;
-
-      if (myPick === oppPick) {
-        msg += 'သရေကျပါသည်!';
-      } else if (
-        (myPick.includes('ကျောက်တုံး') && oppPick.includes('ကတ်ကြေး')) ||
-        (myPick.includes('စက္ကူ') && oppPick.includes('ကျောက်တုံး')) ||
-        (myPick.includes('ကတ်ကြေး') && oppPick.includes('စက္ကူ'))
-      ) {
-        rpsScore.me++;
-        msg += 'သင် အနိုင်ရပါသည်!';
-      } else {
-        rpsScore.opp++;
-        msg += 'ပြိုင်ဘက် အနိုင်ရပါသည်!';
+      if (!room || room.winner || (room.p1 && room.p2 && room.p1.id !== currentUser.gameId && room.p2.id !== currentUser.gameId)) {
+        room = {
+          id: roomId,
+          gameType,
+          p1: { id: currentUser.gameId, name: currentUser.displayName, avatar: currentUser.avatar },
+          p2: null,
+          turn: 'p1',
+          board: gameType === 'ttt' ? Array(9).fill('') : gameType === 'c4' ? Array(42).fill('') : null,
+          rps: { p1Pick: '', p2Pick: '', p1Score: 0, p2Score: 0, log: 'လက်သင်္ကေတ ရွေးချယ်ပါ' },
+          quiz: { idx: 0, p1Score: 0, p2Score: 0 },
+          winner: null
+        };
+        appState.rooms[roomId] = room;
+      } else if (!room.p2 && room.p1.id !== currentUser.gameId) {
+        room.p2 = { id: currentUser.gameId, name: currentUser.displayName, avatar: currentUser.avatar };
       }
 
-      if (rpsScore.me >= 2 || rpsScore.opp >= 2) {
-        const won = rpsScore.me >= 2;
-        applyMatchResult(won, 25);
-        renderRPSStage(won ? '🎉 ဂုဏ်ယူပါတယ်! ပွဲစဉ်အနိုင်ရရှိပြီး +25 RP ရရှိပါသည်။' : '😔 ပွဲစဉ် ရှုံးနိမ့်သွားပါသည်။ ထပ်မံကြိုးစားပါ!');
-        rpsScore = { me: 0, opp: 0 };
-      } else {
-        renderRPSStage(msg);
-      }
+      saveState();
+      renderOnlineRoomStage();
     }
 
-    /* ---------------- GAME 2: TIC-TAC-TOE ---------------- */
-    let tttBoard = Array(9).fill('');
-    let tttOver = false;
+    function renderOnlineRoomStage() {
+      const room = appState.rooms?.[activeRoomId];
+      if (!room) return;
+      const stage = document.getElementById('stageBody');
+      const codeOnly = activeRoomId.split('_')[0];
+      document.getElementById('stageModeBadge').textContent = `🌐 Room: ${codeOnly}`;
 
-    function initTTTGame() {
-      tttBoard = Array(9).fill('');
-      tttOver = false;
-      document.getElementById('stageTitle').textContent = '⭕ Tic-Tac-Toe (အကွက်ချ ကစားနည်း)';
-      renderTTTStage('သင့်အလှည့် (❌) ဖြစ်ပါသည်။ အကွက်တစ်ကွက် နှိပ်ပါ။');
-    }
-
-    function renderTTTStage(status) {
-      document.getElementById('stageBody').innerHTML = `
-        <div class="max-w-xs mx-auto text-center space-y-4 py-2">
-          <p class="text-xs font-bold text-indigo-300">${status}</p>
-          <div class="grid grid-cols-3 gap-2">
-            ${tttBoard.map((val, i) => `
-              <button onclick="clickTTTCell(${i})" class="ttt-cell ${val === '❌' ? 'text-indigo-400' : 'text-rose-400'}">${val}</button>
-            `).join('')}
-          </div>
-          <button onclick="initTTTGame()" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs">🔄 ပွဲအသစ် ပြန်စမည်</button>
-        </div>
-      `;
-    }
-
-    function checkTTTWin(b) {
-      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for (const [a,c,d] of lines) {
-        if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a];
-      }
-      return b.includes('') ? null : 'DRAW';
-    }
-
-    function clickTTTCell(idx) {
-      if (tttOver || tttBoard[idx]) return;
-      tttBoard[idx] = '❌';
-      let res = checkTTTWin(tttBoard);
-      if (res) return finishTTT(res);
-
-      // Smart AI or Online Opponent Reply
-      const empty = tttBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
-      if (empty.length) {
-        const aiPick = empty[Math.floor(Math.random() * empty.length)];
-        tttBoard[aiPick] = '⭕';
-      }
-      res = checkTTTWin(tttBoard);
-      if (res) return finishTTT(res);
-      renderTTTStage('သင့်အလှည့် (❌) ဖြစ်ပါသည်။');
-    }
-
-    function finishTTT(res) {
-      tttOver = true;
-      if (res === '❌') {
-        applyMatchResult(true, 30);
-        renderTTTStage('🎉 သင် အနိုင်ရရှိပါသည်! (+30 RP)');
-      } else if (res === '⭕') {
-        applyMatchResult(false, 30);
-        renderTTTStage('😔 ပြိုင်ဘက် (⭕) အနိုင်ရရှိသွားပါသည်။');
-      } else {
-        renderTTTStage('🤝 သရေပွဲ ဖြစ်ပါသည်!');
-      }
-    }
-
-    /* ---------------- GAME 3: MYANMAR RIDDLE QUIZ ---------------- */
-    let quizIndex = 0;
-    let quizScore = 0;
-
-    function initQuizGame() {
-      quizIndex = 0;
-      quizScore = 0;
-      document.getElementById('stageTitle').textContent = '🏮 မြန်မာရိုးရာ ပဟေဠိ ဉာဏ်စမ်း';
-      renderQuizQuestion();
-    }
-
-    function renderQuizQuestion() {
-      const list = appState.quizzes;
-      if (quizIndex >= list.length) {
-        const won = quizScore >= Math.ceil(list.length / 2);
-        applyMatchResult(won, 35);
-        document.getElementById('stageBody').innerHTML = `
-          <div class="text-center py-6 space-y-3">
-            <div class="text-4xl">${won ? '🏆' : '📚'}</div>
-            <h3 class="text-lg font-bold">ရမှတ်: ${quizScore} / ${list.length}</h3>
-            <p class="text-xs text-slate-300">${won ? 'ဂုဏ်ယူပါတယ်! အောင်မြင်သဖြင့် +35 RP ရရှိပါသည်။' : 'အမှတ်ပြည့်မီအောင် ထပ်မံကြိုးစားပါ။'}</p>
-            <button onclick="initQuizGame()" class="px-5 py-2 rounded-xl bg-amber-600 text-xs font-bold">ပြန်ကစားမည်</button>
+      if (!room.p2) {
+        document.getElementById('stageTitle').textContent = '🌐 ပြိုင်ဘက် ရှာဖွေနေပါသည်...';
+        stage.innerHTML = `
+          <div class="text-center py-8 space-y-3">
+            <div class="text-4xl animate-bounce">📡</div>
+            <h3 class="text-base font-bold">Room Code: <span class="text-emerald-400 font-mono">${codeOnly}</span> တွင် ပြိုင်ဘက် စောင့်နေပါသည်</h3>
+            <p class="text-xs text-slate-400">သူငယ်ချင်းအား <b>Online 1v1</b> ရွေးပြီး Room Code <b>${codeOnly}</b> ဖြင့် ဝင်ခိုင်းပါ။</p>
           </div>
         `;
         return;
       }
 
-      const item = list[quizIndex];
-      document.getElementById('stageBody').innerHTML = `
-        <div class="space-y-4 py-2">
-          <div class="flex justify-between text-xs text-slate-400">
-            <span>မေးခွန်း (${quizIndex + 1} / ${list.length})</span>
-            <span class="text-emerald-400 font-bold">မှန်ကန်မှု: ${quizScore}</span>
+      const amP1 = room.p1.id === currentUser.gameId;
+      const headerHtml = `
+        <div class="flex items-center justify-between bg-slate-950/90 p-3 rounded-xl mb-4 text-xs">
+          <div>${room.p1.avatar} <b>${room.p1.name}</b> ${amP1 ? '(သင်)' : ''}</div>
+          <span class="text-indigo-400 font-bold">VS</span>
+          <div>${room.p2.avatar} <b>${room.p2.name}</b> ${!amP1 ? '(သင်)' : ''}</div>
+        </div>
+      `;
+
+      if (room.gameType === 'ttt') {
+        document.getElementById('stageTitle').textContent = '⭕ Online Tic-Tac-Toe 1v1';
+        const myTurn = (amP1 && room.turn === 'p1') || (!amP1 && room.turn === 'p2');
+        stage.innerHTML = headerHtml + `
+          <div class="max-w-xs mx-auto text-center space-y-3">
+            <p class="text-xs font-bold ${myTurn ? 'text-emerald-400' : 'text-amber-300'}">
+              ${room.winner ? `🏆 အနိုင်ရရှိသူ: ${room.winner}` : (myTurn ? 'သင့်အလှည့် ဖြစ်ပါသည်!' : 'ပြိုင်ဘက် ရွှေ့မည့်အလှည့် စောင့်ပါ...')}
+            </p>
+            <div class="grid grid-cols-3 gap-2">
+              ${room.board.map((v, idx) => `<button onclick="onlineTTTMove(${idx})" class="ttt-cell">${v}</button>`).join('')}
+            </div>
           </div>
-          <div class="p-4 rounded-xl bg-slate-900 font-bold text-sm leading-relaxed">${item.q}</div>
-          <div class="grid md:grid-cols-2 gap-2.5">
-            ${item.opts.map((opt, idx) => `
-              <button onclick="submitQuizAnswer(${idx})" class="p-3 rounded-xl bg-slate-800 hover:bg-indigo-600 text-left text-xs font-bold transition">
-                (${idx + 1}) ${opt}
-              </button>
-            `).join('')}
+        `;
+      } else if (room.gameType === 'rps') {
+        document.getElementById('stageTitle').textContent = '✌️ Online ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး';
+        const myPick = amP1 ? room.rps.p1Pick : room.rps.p2Pick;
+        stage.innerHTML = headerHtml + `
+          <div class="text-center space-y-4 py-2">
+            <div class="text-base font-bold">${room.p1.name}: ${room.rps.p1Score} — ${room.p2.name}: ${room.rps.p2Score}</div>
+            <p class="text-xs text-indigo-300 font-bold">${room.winner ? `🏆 အနိုင်ရရှိသူ: ${room.winner}` : room.rps.log}</p>
+            ${room.winner ? '' : myPick ? `<p class="text-xs text-amber-300">သင် (${myPick}) ရွေးပြီးပါပြီ။ ပြိုင်ဘက် ရွေးချယ်မှု စောင့်နေသည်...</p>` : `
+              <div class="flex justify-center gap-3">
+                <button onclick="onlineRPSPick('🪨')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl">🪨</button>
+                <button onclick="onlineRPSPick('📄')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl">📄</button>
+                <button onclick="onlineRPSPick('✌️')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl">✌️</button>
+              </div>
+            `}
+          </div>
+        `;
+      } else if (room.gameType === 'c4') {
+        document.getElementById('stageTitle').textContent = '🔴🟡 Online ၄ ပွင့်ဆက် (Connect 4)';
+        const myTurn = (amP1 && room.turn === 'p1') || (!amP1 && room.turn === 'p2');
+        stage.innerHTML = headerHtml + `
+          <div class="max-w-sm mx-auto text-center space-y-3">
+            <p class="text-xs font-bold ${myTurn ? 'text-emerald-400' : 'text-amber-300'}">
+              ${room.winner ? `🏆 အနိုင်ရရှိသူ: ${room.winner}` : (myTurn ? 'သင့်အလှည့် (ကော်လံ နှိပ်ပါ)' : 'ပြိုင်ဘက် အလှည့်စောင့်ပါ...')}
+            </p>
+            <div class="grid grid-cols-7 gap-1.5 bg-indigo-950/60 p-2.5 rounded-2xl border border-indigo-500/30">
+              ${room.board.map((cell, idx) => `
+                <button onclick="onlineC4Drop(${idx % 7})" class="c4-cell ${cell === 'R' ? '!bg-rose-500' : cell === 'Y' ? '!bg-amber-400' : ''}"></button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        document.getElementById('stageTitle').textContent = '🏮 Online စကားထာ ပြိုင်ပွဲ';
+        const qItem = appState.quizzes[room.quiz.idx % appState.quizzes.length];
+        stage.innerHTML = headerHtml + `
+          <div class="space-y-3">
+            <div class="flex justify-between text-xs font-bold">
+              <span>${room.p1.name}: ${room.quiz.p1Score} မှတ်</span>
+              <span>မေးခွန်း ${room.quiz.idx + 1} / 5</span>
+              <span>${room.p2.name}: ${room.quiz.p2Score} မှတ်</span>
+            </div>
+            ${room.winner ? `<div class="p-4 rounded-xl bg-amber-500/20 text-center font-bold text-amber-300">🏆 အနိုင်ရရှိသူ: ${room.winner}</div>` : `
+              <div class="p-4 rounded-xl bg-slate-950 font-bold text-sm">${qItem.q}</div>
+              <div class="grid sm:grid-cols-2 gap-2">
+                ${qItem.opts.map((o, i) => `<button onclick="onlineQuizAns(${i})" class="p-3 rounded-xl bg-slate-800 hover:bg-indigo-600 text-left text-xs font-bold">${o}</button>`).join('')}
+              </div>
+            `}
+          </div>
+        `;
+      }
+    }
+
+    function onlineTTTMove(idx) {
+      const room = appState.rooms[activeRoomId];
+      if (!room || !room.p2 || room.winner || room.board[idx]) return;
+      const amP1 = room.p1.id === currentUser.gameId;
+      if ((amP1 && room.turn !== 'p1') || (!amP1 && room.turn !== 'p2')) return;
+
+      room.board[idx] = amP1 ? '❌' : '⭕';
+      room.turn = amP1 ? 'p2' : 'p1';
+      const w = checkTTTWin(room.board);
+      if (w) {
+        room.winner = w === 'DRAW' ? 'သရေပွဲ' : (w === '❌' ? room.p1.name : room.p2.name);
+        if (w !== 'DRAW') applyMatchResult((w === '❌' && amP1) || (w === '⭕' && !amP1), 30);
+      }
+      saveState();
+    }
+
+    function onlineRPSPick(pick) {
+      const room = appState.rooms[activeRoomId];
+      if (!room || !room.p2 || room.winner) return;
+      const amP1 = room.p1.id === currentUser.gameId;
+      if (amP1) room.rps.p1Pick = pick; else room.rps.p2Pick = pick;
+
+      if (room.rps.p1Pick && room.rps.p2Pick) {
+        const a = room.rps.p1Pick, b = room.rps.p2Pick;
+        if (a === b) {
+          room.rps.log = `${a} vs ${b} — သရေကျပါသည်!`;
+        } else if ((a === '🪨' && b === '✌️') || (a === '📄' && b === '🪨') || (a === '✌️' && b === '📄')) {
+          room.rps.p1Score++;
+          room.rps.log = `${a} vs ${b} — ${room.p1.name} အနိုင်ရသည်!`;
+        } else {
+          room.rps.p2Score++;
+          room.rps.log = `${a} vs ${b} — ${room.p2.name} အနိုင်ရသည်!`;
+        }
+        room.rps.p1Pick = '';
+        room.rps.p2Pick = '';
+
+        if (room.rps.p1Score >= 2 || room.rps.p2Score >= 2) {
+          const p1Won = room.rps.p1Score >= 2;
+          room.winner = p1Won ? room.p1.name : room.p2.name;
+          applyMatchResult((p1Won && amP1) || (!p1Won && !amP1), 25);
+        }
+      }
+      saveState();
+    }
+
+    function onlineC4Drop(col) {
+      const room = appState.rooms[activeRoomId];
+      if (!room || !room.p2 || room.winner) return;
+      const amP1 = room.p1.id === currentUser.gameId;
+      if ((amP1 && room.turn !== 'p1') || (!amP1 && room.turn !== 'p2')) return;
+
+      for (let r = 5; r >= 0; r--) {
+        const idx = r * 7 + col;
+        if (!room.board[idx]) {
+          room.board[idx] = amP1 ? 'R' : 'Y';
+          room.turn = amP1 ? 'p2' : 'p1';
+          const w = checkC4Win(room.board);
+          if (w) {
+            room.winner = w === 'R' ? room.p1.name : room.p2.name;
+            applyMatchResult((w === 'R' && amP1) || (w === 'Y' && !amP1), 35);
+          }
+          break;
+        }
+      }
+      saveState();
+    }
+
+    function onlineQuizAns(ansIdx) {
+      const room = appState.rooms[activeRoomId];
+      if (!room || !room.p2 || room.winner) return;
+      const amP1 = room.p1.id === currentUser.gameId;
+      const qItem = appState.quizzes[room.quiz.idx % appState.quizzes.length];
+      if (ansIdx === qItem.ans) {
+        if (amP1) room.quiz.p1Score += 10; else room.quiz.p2Score += 10;
+      }
+      room.quiz.idx++;
+      if (room.quiz.idx >= 5) {
+        const p1Won = room.quiz.p1Score >= room.quiz.p2Score;
+        room.winner = p1Won ? room.p1.name : room.p2.name;
+        applyMatchResult((p1Won && amP1) || (!p1Won && !amP1), 35);
+      }
+      saveState();
+    }
+
+    /* ---------------- SOLO AI GAMES ---------------- */
+    let soloRps = { me: 0, ai: 0 };
+    function initSoloRPS() {
+      soloRps = { me: 0, ai: 0 };
+      document.getElementById('stageTitle').textContent = '✌️ ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး (Solo AI)';
+      renderSoloRPS('လက်သင်္ကေတ တစ်ခုကို ရွေးချယ်ပါ');
+    }
+    function renderSoloRPS(msg) {
+      document.getElementById('stageBody').innerHTML = `
+        <div class="text-center space-y-5 py-4">
+          <div class="flex justify-center gap-10 text-lg font-bold">
+            <span class="text-emerald-400">သင်: ${soloRps.me}</span>
+            <span class="text-rose-400">AI Bot: ${soloRps.ai}</span>
+          </div>
+          <p class="text-sm text-indigo-300 font-bold">${msg}</p>
+          <div class="flex justify-center gap-4">
+            <button onclick="playSoloRPS('🪨 ကျောက်တုံး')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl font-bold">🪨<div class="text-xs mt-1">ကျောက်တုံး</div></button>
+            <button onclick="playSoloRPS('📄 စက္ကူ')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl font-bold">📄<div class="text-xs mt-1">စက္ကူ</div></button>
+            <button onclick="playSoloRPS('✌️ ကတ်ကြေး')" class="p-4 rounded-2xl bg-slate-800 hover:bg-indigo-600 text-2xl font-bold">✌️<div class="text-xs mt-1">ကတ်ကြေး</div></button>
           </div>
         </div>
       `;
     }
+    function playSoloRPS(me) {
+      const opts = ['🪨 ကျောက်တုံး', '📄 စက္ကူ', '✌️ ကတ်ကြေး'];
+      const ai = opts[Math.floor(Math.random() * 3)];
+      let txt = `သင် (${me}) vs AI (${ai}) — `;
+      if (me === ai) txt += 'သရေကျပါသည်!';
+      else if ((me.includes('ကျောက်') && ai.includes('ကတ်')) || (me.includes('စက္ကူ') && ai.includes('ကျောက်')) || (me.includes('ကတ်') && ai.includes('စက္ကူ'))) {
+        soloRps.me++; txt += 'သင် အနိုင်ရပါသည်!';
+      } else {
+        soloRps.ai++; txt += 'AI အနိုင်ရပါသည်!';
+      }
+      if (soloRps.me >= 2 || soloRps.ai >= 2) {
+        const won = soloRps.me >= 2;
+        applyMatchResult(won, 25);
+        renderSoloRPS(won ? '🎉 ဂုဏ်ယူပါတယ်! ပွဲအနိုင်ရပြီး +25 RP ရရှိပါသည်။' : '😔 ပွဲရှုံးနိမ့်သွားပါသည်။ ထပ်မံကြိုးစားပါ!');
+        soloRps = { me: 0, ai: 0 };
+      } else renderSoloRPS(txt);
+    }
 
-    function submitQuizAnswer(choiceIdx) {
-      if (choiceIdx === appState.quizzes[quizIndex].ans) quizScore++;
-      quizIndex++;
-      renderQuizQuestion();
+    let soloTTT = Array(9).fill('');
+    let soloTTTOver = false;
+    function initSoloTTT() {
+      soloTTT = Array(9).fill('');
+      soloTTTOver = false;
+      document.getElementById('stageTitle').textContent = '⭕ Tic-Tac-Toe (Solo AI)';
+      renderSoloTTT('သင့်အလှည့် (❌) ဖြစ်ပါသည်');
+    }
+    function renderSoloTTT(msg) {
+      document.getElementById('stageBody').innerHTML = `
+        <div class="max-w-xs mx-auto text-center space-y-4">
+          <p class="text-xs font-bold text-indigo-300">${msg}</p>
+          <div class="grid grid-cols-3 gap-2">
+            ${soloTTT.map((v, i) => `<button onclick="clickSoloTTT(${i})" class="ttt-cell ${v === '❌' ? 'text-indigo-400' : 'text-rose-400'}">${v}</button>`).join('')}
+          </div>
+          <button onclick="initSoloTTT()" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs">🔄 ပြန်စမည်</button>
+        </div>
+      `;
+    }
+    function checkTTTWin(b) {
+      const L = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (const [a,c,d] of L) if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a];
+      return b.includes('') ? null : 'DRAW';
+    }
+    function clickSoloTTT(i) {
+      if (soloTTTOver || soloTTT[i]) return;
+      soloTTT[i] = '❌';
+      let r = checkTTTWin(soloTTT);
+      if (r) return endSoloTTT(r);
+      const empty = soloTTT.map((v, idx) => v === '' ? idx : null).filter(v => v !== null);
+      if (empty.length) soloTTT[empty[Math.floor(Math.random() * empty.length)]] = '⭕';
+      r = checkTTTWin(soloTTT);
+      if (r) return endSoloTTT(r);
+      renderSoloTTT('သင့်အလှည့် (❌)');
+    }
+    function endSoloTTT(r) {
+      soloTTTOver = true;
+      if (r === '❌') { applyMatchResult(true, 30); renderSoloTTT('🎉 သင် အနိုင်ရရှိပါသည်! (+30 RP)'); }
+      else if (r === '⭕') { applyMatchResult(false, 30); renderSoloTTT('😔 AI Bot အနိုင်ရသွားပါသည်။'); }
+      else renderSoloTTT('🤝 သရေပွဲ ဖြစ်ပါသည်!');
+    }
+
+    let soloC4 = Array(42).fill('');
+    let soloC4Over = false;
+    function initSoloC4() {
+      soloC4 = Array(42).fill('');
+      soloC4Over = false;
+      document.getElementById('stageTitle').textContent = '🔴🟡 ၄ ပွင့်ဆက် Connect 4 (Solo AI)';
+      renderSoloC4('အနီရောင် (🔴) သင့်အလှည့် — ကော်လံတစ်ခု နှိပ်ပါ');
+    }
+    function renderSoloC4(msg) {
+      document.getElementById('stageBody').innerHTML = `
+        <div class="max-w-sm mx-auto text-center space-y-3">
+          <p class="text-xs font-bold text-indigo-300">${msg}</p>
+          <div class="grid grid-cols-7 gap-1.5 bg-indigo-950/70 p-2.5 rounded-2xl border border-indigo-500/30">
+            ${soloC4.map((c, idx) => `<button onclick="dropSoloC4(${idx % 7})" class="c4-cell ${c === 'R' ? '!bg-rose-500' : c === 'Y' ? '!bg-amber-400' : ''}"></button>`).join('')}
+          </div>
+          <button onclick="initSoloC4()" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs">🔄 ပြန်စမည်</button>
+        </div>
+      `;
+    }
+    function checkC4Win(b) {
+      for (let r = 0; r < 6; r++) {
+        for (let c = 0; c < 7; c++) {
+          const v = b[r * 7 + c];
+          if (!v) continue;
+          if (c <= 3 && v === b[r*7+c+1] && v === b[r*7+c+2] && v === b[r*7+c+3]) return v;
+          if (r <= 2 && v === b[(r+1)*7+c] && v === b[(r+2)*7+c] && v === b[(r+3)*7+c]) return v;
+          if (r <= 2 && c <= 3 && v === b[(r+1)*7+c+1] && v === b[(r+2)*7+c+2] && v === b[(r+3)*7+c+3]) return v;
+          if (r <= 2 && c >= 3 && v === b[(r+1)*7+c-1] && v === b[(r+2)*7+c-2] && v === b[(r+3)*7+c-3]) return v;
+        }
+      }
+      return null;
+    }
+    function dropSoloC4(col) {
+      if (soloC4Over) return;
+      let placed = false;
+      for (let r = 5; r >= 0; r--) {
+        if (!soloC4[r * 7 + col]) { soloC4[r * 7 + col] = 'R'; placed = true; break; }
+      }
+      if (!placed) return;
+      let w = checkC4Win(soloC4);
+      if (w) { soloC4Over = true; applyMatchResult(true, 35); return renderSoloC4('🎉 သင် (🔴) ၄ ပွင့်ဆက် အနိုင်ရပါသည်! (+35 RP)'); }
+
+      const validCols = [0,1,2,3,4,5,6].filter(c => !soloC4[c]);
+      if (validCols.length) {
+        const aiCol = validCols[Math.floor(Math.random() * validCols.length)];
+        for (let r = 5; r >= 0; r--) if (!soloC4[r * 7 + aiCol]) { soloC4[r * 7 + aiCol] = 'Y'; break; }
+      }
+      w = checkC4Win(soloC4);
+      if (w) { soloC4Over = true; applyMatchResult(false, 35); return renderSoloC4('😔 AI Bot (🟡) အနိုင်ရသွားပါသည်။'); }
+      renderSoloC4('သင့်အလှည့် (🔴)');
+    }
+
+    let soloQIdx = 0, soloQScore = 0;
+    function initSoloQuiz() {
+      soloQIdx = 0; soloQScore = 0;
+      document.getElementById('stageTitle').textContent = '🏮 မြန်မာ့စကားထာ ပဟေဠိ (Solo)';
+      renderSoloQuiz();
+    }
+    function renderSoloQuiz() {
+      const list = appState.quizzes;
+      if (soloQIdx >= list.length) {
+        const won = soloQScore >= Math.ceil(list.length / 2);
+        applyMatchResult(won, 35);
+        document.getElementById('stageBody').innerHTML = `
+          <div class="text-center py-6 space-y-3">
+            <div class="text-4xl">${won ? '🏆' : '📚'}</div>
+            <h3 class="text-lg font-bold">ရမှတ်: ${soloQScore} / ${list.length}</h3>
+            <p class="text-xs text-slate-300">${won ? 'ဂုဏ်ယူပါတယ်! +35 RP ရရှိပါသည်။' : 'ထပ်မံကြိုးစားကြည့်ပါ!'}</p>
+            <button onclick="initSoloQuiz()" class="px-5 py-2 rounded-xl bg-amber-600 text-xs font-bold">ပြန်ကစားမည်</button>
+          </div>
+        `;
+        return;
+      }
+      const item = list[soloQIdx];
+      document.getElementById('stageBody').innerHTML = `
+        <div class="space-y-4">
+          <div class="flex justify-between text-xs text-slate-400">
+            <span>မေးခွန်း (${soloQIdx + 1} / ${list.length})</span>
+            <span class="text-emerald-400 font-bold">မှန်ကန်မှု: ${soloQScore}</span>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-950 font-bold text-sm leading-relaxed">${item.q}</div>
+          <div class="grid sm:grid-cols-2 gap-2.5">
+            ${item.opts.map((o, i) => `<button onclick="ansSoloQuiz(${i})" class="p-3 rounded-xl bg-slate-800 hover:bg-indigo-600 text-left text-xs font-bold">(${i+1}) ${o}</button>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+    function ansSoloQuiz(i) {
+      if (i === appState.quizzes[soloQIdx].ans) soloQScore++;
+      soloQIdx++;
+      renderSoloQuiz();
     }
 
     /********************************************************************
-     * KNOCKOUT TOURNAMENT & ADMIN FUNCTIONS
+     * 6. KNOCKOUT TOURNAMENT & ADMIN CONTROLS
      ********************************************************************/
     function joinActiveTournament() {
       const t = appState.tournament;
@@ -1068,28 +1504,55 @@
       const t = appState.tournament;
       const box = document.getElementById('tourneyViewContainer');
       if (!box) return;
-
-      const gameNames = { rps: 'ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး', ttt: 'Tic-Tac-Toe', quiz: 'မြန်မာရိုးရာ ပဟေဠိ' };
+      const gNames = { rps: 'ကတ်ကြေး၊ စက္ကူ၊ ကျောက်တုံး', ttt: 'Tic-Tac-Toe', c4: '၄ ပွင့်ဆက် (Connect 4)', quiz: 'မြန်မာ့စကားထာ ပဟေဠိ' };
       box.innerHTML = `
-        <div class="p-4 rounded-xl bg-slate-900 space-y-3">
+        <div class="p-4 rounded-2xl bg-slate-950 space-y-3 border border-amber-500/20">
           <div class="flex flex-wrap justify-between gap-2">
-            <div><span class="text-amber-400 font-bold">${t.name}</span> • ကစားနည်း: <b>${gameNames[t.game] || t.game}</b></div>
+            <div><span class="text-amber-400 font-bold text-sm">${t.name}</span> • ကစားနည်း: <b>${gNames[t.game] || t.game}</b></div>
             <div class="text-emerald-400 font-bold">🏆 ဆုကြေး: +${t.prize} RP</div>
           </div>
-          <div>လက်ရှိ စာရင်းသွင်းထားသူများ (${t.players.length}/4): <span class="font-mono text-indigo-300">${t.players.join(', ')}</span></div>
-          ${t.winner ? `<div class="p-3 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold">👑 ချန်ပီယံ အနိုင်ရရှိသူ: ${t.winner}</div>` : ''}
+          <div>စာရင်းသွင်းထားသူများ (${t.players.length}/4): <span class="font-mono text-indigo-300">${t.players.join(', ')}</span></div>
+          ${t.matches?.length ? `
+            <div class="grid sm:grid-cols-2 gap-2 pt-2">
+              ${t.matches.map((m, idx) => `
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                  <div class="text-[10px] text-slate-400 mb-1">ပွဲစဉ် #${idx + 1}</div>
+                  <div class="font-bold">${m.p1} <span class="text-rose-400">VS</span> ${m.p2}</div>
+                  <div class="text-emerald-400 mt-1">အနိုင်ရသူ: <b>${m.winner || 'ယှဉ်ပြိုင်နေဆဲ'}</b></div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+          ${t.winner ? `<div class="p-3 rounded-xl bg-amber-500/20 border border-amber-500/50 text-amber-300 font-bold text-center">👑 ချန်ပီယံ ဆုရှင်: ${t.winner} (+${t.prize} RP)</div>` : ''}
         </div>
       `;
     }
 
-    function renderAdminInputs() {
+    function renderAdminPanelData() {
       document.getElementById('adminFirebaseUrl').value = appState.config.firebaseUrl || '';
       document.getElementById('adminAnnouncement').value = appState.config.announcement || '';
       document.getElementById('adminMaintenance').checked = !!appState.config.maintenance;
+      const eg = appState.config.enabledGames || { rps: true, ttt: true, c4: true, quiz: true };
+      ['rps', 'ttt', 'c4', 'quiz'].forEach(g => {
+        const el = document.getElementById('chk-' + g);
+        if (el) el.checked = !!eg[g];
+      });
 
-      const qList = document.getElementById('adminQuizList');
-      qList.innerHTML = appState.quizzes.map((q, i) => `
-        <div class="flex justify-between items-center bg-slate-900 p-2 rounded-lg">
+      const uBox = document.getElementById('adminUserList');
+      uBox.innerHTML = Object.values(appState.users).map(u => `
+        <div class="p-2.5 rounded-xl bg-slate-950 flex flex-wrap items-center justify-between gap-2">
+          <span>${u.avatar} <b>${u.displayName}</b> (${u.gameId}) • <b class="text-amber-300">${u.rp} RP</b></span>
+          <div class="flex gap-1.5">
+            <button onclick="adminAdjustRP('${u.username}', 100)" class="px-2 py-1 rounded bg-emerald-700 font-bold">+100 RP</button>
+            <button onclick="adminAdjustRP('${u.username}', -100)" class="px-2 py-1 rounded bg-slate-800">-100 RP</button>
+            ${u.username === 'yanlinnaung' ? '' : `<button onclick="adminToggleBan('${u.username}')" class="px-2 py-1 rounded ${u.banned ? 'bg-amber-600' : 'bg-rose-700'} font-bold">${u.banned ? 'Unban' : 'Ban'}</button>`}
+          </div>
+        </div>
+      `).join('');
+
+      const qBox = document.getElementById('adminQuizList');
+      qBox.innerHTML = appState.quizzes.map((q, i) => `
+        <div class="flex justify-between items-center bg-slate-950 p-2 rounded-lg">
           <span>${i + 1}. ${q.q} (အဖြေ: ${q.opts[q.ans]})</span>
           <button onclick="adminDeleteQuiz(${i})" class="text-rose-400 font-bold px-2">ဖျက်မည်</button>
         </div>
@@ -1100,15 +1563,35 @@
       appState.config.firebaseUrl = document.getElementById('adminFirebaseUrl').value.trim();
       appState.config.announcement = document.getElementById('adminAnnouncement').value.trim();
       appState.config.maintenance = document.getElementById('adminMaintenance').checked;
+      appState.config.enabledGames = {
+        rps: document.getElementById('chk-rps').checked,
+        ttt: document.getElementById('chk-ttt').checked,
+        c4: document.getElementById('chk-c4').checked,
+        quiz: document.getElementById('chk-quiz').checked
+      };
       saveState();
       alert('Server Settings ကို သိမ်းဆည်းပြီးပါပြီ။');
     }
 
+    function adminAdjustRP(username, delta) {
+      if (appState.users[username]) {
+        appState.users[username].rp = Math.max(0, appState.users[username].rp + delta);
+        saveState();
+      }
+    }
+
+    function adminToggleBan(username) {
+      if (appState.users[username]) {
+        appState.users[username].banned = !appState.users[username].banned;
+        saveState();
+      }
+    }
+
     function adminCreateTournament() {
       appState.tournament = {
-        name: document.getElementById('adminTourneyName').value.trim() || 'Myanmar Cup',
+        name: document.getElementById('adminTourneyName').value.trim() || 'Vanguard Grand Cup',
         game: document.getElementById('adminTourneyGame').value,
-        prize: parseInt(document.getElementById('adminTourneyPrize').value, 10) || 200,
+        prize: parseInt(document.getElementById('adminTourneyPrize').value, 10) || 250,
         players: [currentUser.gameId],
         matches: [],
         winner: null
@@ -1117,17 +1600,21 @@
       alert('ရှုံးထွက် ပြိုင်ပွဲအသစ် ဖွင့်လှစ်လိုက်ပါပြီ။');
     }
 
-    function adminFillTournamentBots() {
+    function adminStartKnockoutBracket() {
       const t = appState.tournament;
-      while (t.players.length < 4) {
-        t.players.push('BOT-' + Math.floor(100 + Math.random() * 900));
-      }
-      const winnerId = t.players[0];
-      t.winner = winnerId;
-      const u = Object.values(appState.users).find(x => x.gameId === winnerId);
-      if (u) u.rp += t.prize;
+      while (t.players.length < 4) t.players.push('BOT-' + Math.floor(100 + Math.random() * 899));
+      const m1Win = t.players[0];
+      const m2Win = t.players[2];
+      t.matches = [
+        { p1: t.players[0], p2: t.players[1], winner: m1Win },
+        { p1: t.players[2], p2: t.players[3], winner: m2Win },
+        { p1: m1Win, p2: m2Win, winner: m1Win }
+      ];
+      t.winner = m1Win;
+      const champUser = Object.values(appState.users).find(u => u.gameId === m1Win);
+      if (champUser) champUser.rp += t.prize;
       saveState();
-      alert(`ရှုံးထွက်ပွဲ ပြီးဆုံးပါပြီ! ချန်ပီယံ ${winnerId} ကို +${t.prize} RP ချီးမြှင့်ပြီးပါပြီ။`);
+      alert(`ရှုံးထွက် ဗိုလ်လုပွဲ ပြီးဆုံးပါပြီ! ချန်ပီယံ ${m1Win} ကို +${t.prize} RP ချီးမြှင့်ပြီးပါပြီ။`);
     }
 
     function adminAddQuizQuestion() {
@@ -1149,11 +1636,8 @@
       saveState();
     }
 
-    // Register Service Worker for Mobile App (PWA)
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      });
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
   </script>
 </body>
