@@ -630,7 +630,7 @@
 
     // Real-Time Cloud Sync Polling (Every 2.5 seconds)
     setInterval(async () => {
-      const url = (appState.config.firebaseUrl || DEFAULT_FIREBASE_URL || '').replace(/\/$/, '');
+      const url = (appState.config.firebaseUrl || DEFAULT_FIREBASE_URL || 'https://arena-25951-default-rtdb.asia-southeast1.firebasedatabase.app').replace(/\/$/, '');
       if (!url) return;
       try {
         const res = await fetch(`${url}/vanguardArena.json`);
