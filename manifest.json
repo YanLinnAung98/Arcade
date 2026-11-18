@@ -1,12 +1,12 @@
 {
-  "name": "Myanmar Cyber Arena",
-  "short_name": "MM Arena",
-  "description": "Real-time Online Multiplayer Game & Tournament Platform",
+  "name": "Vanguard Cyber Arena",
+  "short_name": "Vanguard",
+  "description": "Real-time Online Multiplayer Game & Tournament Arena",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0b0f19",
-  "theme_color": "#0f172a",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/686/686589.png",
